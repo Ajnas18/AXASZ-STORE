@@ -1,0 +1,398 @@
+.detailsContainer {
+  display: flex;
+  flex-direction: row;
+  gap: 3rem;
+  max-width: 1400px;
+  margin: 4rem auto;
+  padding: 0 2rem;
+  align-items: flex-start;
+  min-height: 80vh;
+}
+
+/* LEFT SIDE (40%) */
+.leftColumn {
+  width: 40%;
+  position: sticky;
+  top: 100px; /* Accounts for navbar */
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  padding: 2.5rem;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.03);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.brandLogo {
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #666;
+}
+
+.productName {
+  font-size: 2.5rem;
+  font-weight: 800;
+  line-height: 1.1;
+  color: #111;
+  letter-spacing: -0.02em;
+}
+
+.priceRatingRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.price {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #111;
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.starIcon {
+  color: #fbbf24;
+}
+
+.description {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #555;
+  margin-bottom: 0.5rem;
+}
+
+.sectionTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #111;
+  margin-bottom: 1rem;
+}
+
+.sizesGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+
+.sizeBtn {
+  padding: 1rem 0;
+  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: 12px;
+  background: white;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+.sizeBtn:hover {
+  border-color: #111;
+}
+
+.activeSizeBtn {
+  background: #111;
+  color: white;
+  border-color: #111;
+}
+
+.colorsFlex {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.colorSwatch {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.colorSwatch:hover {
+  transform: scale(1.1);
+}
+
+.activeColorSwatch {
+  border-color: #111;
+  transform: scale(1.1);
+  box-shadow: 0 0 0 2px white, 0 0 0 4px #111;
+}
+
+.quantityRow {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.qtySelector {
+  display: flex;
+  align-items: center;
+  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.qtyBtn {
+  padding: 0.75rem 1rem;
+  background: #fafafa;
+  font-weight: 600;
+  color: #111;
+  transition: background 0.2s;
+}
+
+.qtyBtn:hover {
+  background: #f0f0f0;
+}
+
+.qtyValue {
+  padding: 0 1rem;
+  font-weight: 600;
+}
+
+.actionButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.buyNowBtn {
+  width: 100%;
+  padding: 1.25rem;
+  background: #111;
+  color: white;
+  border-radius: 99px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  transition: transform 0.2s, background 0.2s;
+}
+
+.buyNowBtn:hover {
+  background: #222;
+  transform: translateY(-2px);
+}
+
+.addToCartBtn {
+  width: 100%;
+  padding: 1.25rem;
+  background: white;
+  color: #111;
+  border: 1px solid #111;
+  border-radius: 99px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  transition: transform 0.2s, background 0.2s;
+}
+
+.addToCartBtn:hover {
+  background: #fafafa;
+  transform: translateY(-2px);
+}
+
+.wishlistBtn {
+  width: 100%;
+  padding: 1rem;
+  background: transparent;
+  color: #555;
+  font-weight: 500;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  transition: color 0.2s;
+}
+
+.wishlistBtn:hover {
+  color: #111;
+}
+
+.infoList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(0,0,0,0.05);
+}
+
+.infoItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+
+/* RIGHT SIDE (60%) */
+.rightColumn {
+  width: 60%;
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+}
+
+.imagePreview {
+  width: 100%;
+  background: #fafafa;
+  border-radius: 20px;
+  padding: 4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  cursor: zoom-in;
+}
+
+.mainImage {
+  width: 100%;
+  max-width: 600px;
+  height: auto;
+  object-fit: contain;
+  transition: transform 0.4s ease;
+}
+
+.imagePreview:hover .mainImage {
+  transform: scale(1.1) translateY(-10px);
+}
+
+.gallery {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.thumbnail {
+  width: 100px;
+  height: 100px;
+  border-radius: 12px;
+  background: #fafafa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.thumbnail img {
+  width: 80%;
+  height: auto;
+  object-fit: contain;
+}
+
+.activeThumbnail {
+  border-color: #111;
+  background: white;
+}
+
+.specsSection, .featuresSection {
+  background: white;
+  border-radius: 20px;
+  padding: 3rem;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+  border: 1px solid rgba(0, 0, 0, 0.03);
+}
+
+.specsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.specItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.specLabel {
+  font-size: 0.85rem;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.specValue {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #111;
+}
+
+.featuresGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.featureCard {
+  background: #fafafa;
+  padding: 1.5rem;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.featureIcon {
+  color: #2563EB;
+  background: rgba(37, 99, 235, 0.1);
+  padding: 0.5rem;
+  border-radius: 50%;
+}
+
+
+/* MOBILE RESPONSIVE */
+@media (max-width: 1024px) {
+  .detailsContainer {
+    flex-direction: column-reverse; /* Usually info below image on mobile */
+    gap: 2rem;
+  }
+  
+  .leftColumn {
+    width: 100%;
+    position: relative;
+    top: 0;
+  }
+  
+  .rightColumn {
+    width: 100%;
+    gap: 2rem;
+  }
+
+  .imagePreview {
+    padding: 2rem;
+  }
+  
+  .specsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .featuresGrid {
+    grid-template-columns: 1fr;
+  }
+}
