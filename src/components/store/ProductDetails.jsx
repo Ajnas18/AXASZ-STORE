@@ -2,14 +2,17 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Star, Plus, Minus, Heart, ShoppingBag, Truck, ArrowLeftRight, CheckCircle2 } from 'lucide-react';
+import { Star, Plus, Minus, Heart, ShoppingBag, Truck, ArrowLeftRight, CheckCircle2, Camera } from 'lucide-react';
 import styles from './ProductDetails.module.css';
+import { useStore } from '@/store/useStore';
+import { urlFor } from '@/sanity/client';
+import Link from 'next/link';
 
 // Helper to get hex colors from name
 const getColorHex = (name) => {
   const n = name.toLowerCase();
-  if (n.includes('black')) return '#111111';
-  if (n.includes('white')) return '#f0f0f0';
+  if (n.includes('black')) return '#1A1A1A';
+  if (n.includes('white')) return '#E5E5E5';
   if (n.includes('red')) return '#ef4444';
   if (n.includes('blue')) return '#3b82f6';
   if (n.includes('green') || n.includes('volt')) return '#22c55e';
@@ -25,7 +28,10 @@ export default function ProductDetails({ product }) {
   const [selectedSize, setSelectedSize] = useState(product?.sizes[0]);
   const [selectedColor, setSelectedColor] = useState(product?.colors[0]);
   const [quantity, setQuantity] = useState(1);
-  const [activeImage, setActiveImage] = useState(product?.image);
+  const [activeImage, setActiveImage] = useState(product?.image ? urlFor(product.image).url() : '/placeholder1.jpg');
+  
+  const { addToCart, toggleWishlist, wishlist } = useStore();
+  const isWishlisted = wishlist.some((item) => item._id === product?._id || item.id === product?.id);
 
   // Reset state when product changes
   useEffect(() => {
@@ -33,14 +39,23 @@ export default function ProductDetails({ product }) {
       setSelectedSize(product.sizes[0]);
       setSelectedColor(product.colors[0]);
       setQuantity(1);
-      setActiveImage(product.image);
+      setActiveImage(product.image ? urlFor(product.image).url() : '/placeholder1.jpg');
     }
   }, [product]);
 
   if (!product) return null;
 
-  // Mock Gallery Images (just duplicating the main image for demo)
-  const galleryImages = [product.image, product.image, product.image];
+  // Setup Gallery Images
+  const imageUrl = product.image ? urlFor(product.image).url() : '/placeholder1.jpg';
+  const galleryImages = [imageUrl];
+  
+  if (product.modelImage) {
+    galleryImages.push(urlFor(product.modelImage).url());
+  } else {
+    // Fallback if no model image is uploaded yet, to keep the gallery UI populated
+    galleryImages.push(imageUrl);
+    galleryImages.push(imageUrl);
+  }
 
   return (
     <motion.div 
@@ -85,9 +100,9 @@ export default function ProductDetails({ product }) {
         </div>
 
         <div>
-          <h3 className={styles.sectionTitle}>Select Color - {selectedColor}</h3>
+          <h3 className={styles.sectionTitle}>Select Color - {selectedColor || 'N/A'}</h3>
           <div className={styles.colorsFlex}>
-            {product.colors.map(color => (
+            {product.colors?.map(color => (
               <div 
                 key={color}
                 className={`${styles.colorSwatch} ${selectedColor === color ? styles.activeColorSwatch : ''}`}
@@ -111,14 +126,23 @@ export default function ProductDetails({ product }) {
         </div>
 
         <div className={styles.actionButtons}>
-          <button className={styles.addToCartBtn}>
+          <button className={styles.addToCartBtn} onClick={() => addToCart(product, selectedSize, quantity)}>
             <ShoppingBag size={20} /> Add to Cart
           </button>
-          <button className={styles.buyNowBtn}>
+          <button className={styles.buyNowBtn} onClick={() => addToCart(product, selectedSize, quantity)}>
             Buy Now
           </button>
-          <button className={styles.wishlistBtn}>
-            <Heart size={20} /> Add to Wishlist
+          <Link href={`/try/${product._id}`} style={{ width: '100%', textDecoration: 'none' }}>
+            <button className={styles.tryBtn}>
+              <Camera size={20} /> View on Model
+            </button>
+          </Link>
+          <button 
+            className={styles.wishlistBtn} 
+            onClick={() => toggleWishlist(product)}
+            style={{ color: isWishlisted ? 'red' : 'inherit' }}
+          >
+            <Heart size={20} fill={isWishlisted ? 'red' : 'none'} /> Add to Wishlist
           </button>
         </div>
 

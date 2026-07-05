@@ -1,0 +1,25 @@
+export const ALL_PRODUCTS_QUERY = `*[_type == "product"] | order(_createdAt desc)[0...4] {
+  _id,
+  name,
+  brand,
+  productCode,
+  price,
+  originalPrice,
+  rating,
+  reviews,
+  badge,
+  sizes,
+  colors,
+  image,
+  modelImage
+}`;
+
+export const SINGLE_PRODUCT_QUERY = `*[_type == "product" && _id == $id][0] {
+  _id,
+  name,
+  brand,
+  productCode,
+  price,
+  image,
+  modelImage
+}`;

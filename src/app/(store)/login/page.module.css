@@ -1,0 +1,149 @@
+.container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-background);
+  padding: 2rem;
+}
+
+.formWrapper {
+  width: 100%;
+  max-width: 480px;
+  background: white;
+  border-radius: 20px;
+  padding: 3rem 2.5rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--color-secondary);
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.logo {
+  height: 48px;
+  margin-bottom: 1.5rem;
+}
+
+.header h2 {
+  font-family: var(--font-heading);
+  font-size: 2rem;
+  color: var(--color-primary);
+  margin-bottom: 0.5rem;
+}
+
+.header p {
+  color: var(--color-text);
+  opacity: 0.8;
+  font-size: 0.95rem;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.inputGroup label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.icon {
+  position: absolute;
+  left: 1rem;
+  color: #888;
+}
+
+.inputWrapper input {
+  width: 100%;
+  padding: 1rem 1rem 1rem 3rem;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  font-size: 1rem;
+  outline: none;
+  transition: all 0.2s ease;
+  background: #f9f9f9;
+}
+
+.inputWrapper input:focus {
+  border-color: var(--color-primary);
+  background: white;
+  box-shadow: 0 0 0 4px rgba(26, 26, 26, 0.05);
+}
+
+.eyeBtn {
+  position: absolute;
+  right: 1rem;
+  background: none;
+  border: none;
+  color: #888;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem;
+}
+
+.eyeBtn:hover {
+  color: var(--color-primary);
+}
+
+.submitBtn {
+  margin-top: 1rem;
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  padding: 1rem;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.submitBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.submitBtn:active {
+  transform: translateY(0);
+}
+
+.footer {
+  margin-top: 2rem;
+  text-align: center;
+  font-size: 0.95rem;
+  color: var(--color-text);
+}
+
+.footer a {
+  color: var(--color-primary);
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.footer a:hover {
+  text-decoration: underline;
+}

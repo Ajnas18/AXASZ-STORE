@@ -2,9 +2,26 @@
 
 import { motion } from 'framer-motion';
 import { Heart, Star, ShoppingBag, Eye } from 'lucide-react';
+import { urlFor } from '@/sanity/client';
 import styles from './ProductCard.module.css';
 
+import { useStore } from '@/store/useStore';
+
 export default function ProductCard({ product, onClick }) {
+  const { addToCart, toggleWishlist, wishlist } = useStore();
+  
+  const isWishlisted = wishlist.some((item) => item._id === product._id || item.id === product._id);
+
+  const handleAddToCart = (e) => {
+    e.stopPropagation();
+    addToCart(product, product.sizes?.[0] || 9); // default to first size
+  };
+
+  const handleToggleWishlist = (e) => {
+    e.stopPropagation();
+    toggleWishlist(product);
+  };
+
   return (
     <motion.div 
       className={styles.card}
@@ -20,11 +37,15 @@ export default function ProductCard({ product, onClick }) {
         {product.badge && (
           <div className={styles.badge}>{product.badge}</div>
         )}
-        <button className={styles.wishlistBtn}>
-          <Heart size={18} />
+        <button 
+          className={styles.wishlistBtn} 
+          onClick={handleToggleWishlist}
+          style={{ color: isWishlisted ? 'red' : 'inherit' }}
+        >
+          <Heart size={18} fill={isWishlisted ? 'red' : 'none'} />
         </button>
         <motion.img 
-          src={product.image} 
+          src={product.image ? urlFor(product.image).url() : '/placeholder1.jpg'} 
           alt={product.name} 
           className={styles.image}
           variants={{
@@ -42,7 +63,7 @@ export default function ProductCard({ product, onClick }) {
           <button className={styles.actionBtn}>
             <Eye size={16} /> Quick View
           </button>
-          <button className={`${styles.actionBtn} ${styles.primaryBtn}`}>
+          <button className={`${styles.actionBtn} ${styles.primaryBtn}`} onClick={handleAddToCart}>
             <ShoppingBag size={16} /> Add to Cart
           </button>
         </motion.div>
@@ -52,13 +73,16 @@ export default function ProductCard({ product, onClick }) {
         <div className={styles.brandRating}>
           <span className={styles.brand}>{product.brand}</span>
           <div className={styles.rating}>
-            <Star size={12} fill="#F59E0B" color="#F59E0B" />
+            <Star size={12} fill="#1A1A1A" color="#1A1A1A" />
             <span>{product.rating}</span>
             <span className={styles.reviews}>({product.reviews})</span>
           </div>
         </div>
 
         <h3 className={styles.name}>{product.name}</h3>
+        {product.productCode && (
+          <div className={styles.productCode}>SKU: {product.productCode}</div>
+        )}
 
         <div className={styles.priceContainer}>
           <span className={styles.price}>₹{product.price}</span>
@@ -70,12 +94,12 @@ export default function ProductCard({ product, onClick }) {
         <div className={styles.metaInfo}>
           <div className={styles.sizes}>
             <span className={styles.metaLabel}>Sizes:</span>
-            {product.sizes.slice(0, 3).join(", ")}
-            {product.sizes.length > 3 && " +"}
+            {product.sizes?.slice(0, 3).join(", ") || 'N/A'}
+            {product.sizes?.length > 3 && " +"}
           </div>
           <div className={styles.colors}>
             <span className={styles.metaLabel}>Colors:</span>
-            {product.colors.length}
+            {product.colors?.length || 0}
           </div>
         </div>
       </div>

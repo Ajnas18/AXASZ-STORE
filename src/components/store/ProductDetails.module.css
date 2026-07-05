@@ -30,14 +30,14 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 2px;
-  color: #666;
+  color: #7A7A7A;
 }
 
 .productName {
   font-size: 2.5rem;
   font-weight: 800;
   line-height: 1.1;
-  color: #111;
+  color: #1A1A1A;
   letter-spacing: -0.02em;
 }
 
@@ -50,7 +50,7 @@
 .price {
   font-size: 2rem;
   font-weight: 700;
-  color: #111;
+  color: #1A1A1A;
 }
 
 .rating {
@@ -58,24 +58,24 @@
   align-items: center;
   gap: 0.5rem;
   font-size: 0.9rem;
-  color: #555;
+  color: #7A7A7A;
 }
 
 .starIcon {
-  color: #fbbf24;
+  color: #1A1A1A;
 }
 
 .description {
   font-size: 1rem;
   line-height: 1.6;
-  color: #555;
+  color: #7A7A7A;
   margin-bottom: 0.5rem;
 }
 
 .sectionTitle {
   font-size: 1.1rem;
   font-weight: 600;
-  color: #111;
+  color: #1A1A1A;
   margin-bottom: 1rem;
 }
 
@@ -96,13 +96,13 @@
 }
 
 .sizeBtn:hover {
-  border-color: #111;
+  border-color: #1A1A1A;
 }
 
 .activeSizeBtn {
-  background: #111;
+  background: #1A1A1A;
   color: white;
-  border-color: #111;
+  border-color: #1A1A1A;
 }
 
 .colorsFlex {
@@ -126,9 +126,9 @@
 }
 
 .activeColorSwatch {
-  border-color: #111;
+  border-color: #1A1A1A;
   transform: scale(1.1);
-  box-shadow: 0 0 0 2px white, 0 0 0 4px #111;
+  box-shadow: 0 0 0 2px white, 0 0 0 4px #1A1A1A;
 }
 
 .quantityRow {
@@ -147,14 +147,14 @@
 
 .qtyBtn {
   padding: 0.75rem 1rem;
-  background: #fafafa;
+  background: #E5E5E5;
   font-weight: 600;
-  color: #111;
+  color: #1A1A1A;
   transition: background 0.2s;
 }
 
 .qtyBtn:hover {
-  background: #f0f0f0;
+  background: #E5E5E5;
 }
 
 .qtyValue {
@@ -172,7 +172,7 @@
 .buyNowBtn {
   width: 100%;
   padding: 1.25rem;
-  background: #111;
+  background: #1A1A1A;
   color: white;
   border-radius: 99px;
   font-weight: 600;
@@ -181,16 +181,39 @@
 }
 
 .buyNowBtn:hover {
-  background: #222;
+  background: #1A1A1A;
   transform: translateY(-2px);
+}
+
+.tryBtn {
+  width: 100%;
+  padding: 1.25rem;
+  background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+  color: white;
+  border-radius: 99px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+}
+
+.tryBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
 }
 
 .addToCartBtn {
   width: 100%;
   padding: 1.25rem;
   background: white;
-  color: #111;
-  border: 1px solid #111;
+  color: #1A1A1A;
+  border: 1px solid #1A1A1A;
   border-radius: 99px;
   font-weight: 600;
   font-size: 1.1rem;
@@ -202,7 +225,7 @@
 }
 
 .addToCartBtn:hover {
-  background: #fafafa;
+  background: #E5E5E5;
   transform: translateY(-2px);
 }
 
@@ -210,7 +233,7 @@
   width: 100%;
   padding: 1rem;
   background: transparent;
-  color: #555;
+  color: #7A7A7A;
   font-weight: 500;
   display: flex;
   justify-content: center;
@@ -220,7 +243,7 @@
 }
 
 .wishlistBtn:hover {
-  color: #111;
+  color: #1A1A1A;
 }
 
 .infoList {
@@ -237,7 +260,7 @@
   align-items: center;
   gap: 0.5rem;
   font-size: 0.9rem;
-  color: #555;
+  color: #7A7A7A;
 }
 
 
@@ -251,7 +274,7 @@
 
 .imagePreview {
   width: 100%;
-  background: #fafafa;
+  background: #E5E5E5;
   border-radius: 20px;
   padding: 4rem;
   display: flex;
@@ -284,7 +307,7 @@
   width: 100px;
   height: 100px;
   border-radius: 12px;
-  background: #fafafa;
+  background: #E5E5E5;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -300,7 +323,7 @@
 }
 
 .activeThumbnail {
-  border-color: #111;
+  border-color: #1A1A1A;
   background: white;
 }
 
@@ -329,7 +352,7 @@
 
 .specLabel {
   font-size: 0.85rem;
-  color: #888;
+  color: #7A7A7A;
   text-transform: uppercase;
   letter-spacing: 1px;
 }
@@ -337,7 +360,7 @@
 .specValue {
   font-size: 1.1rem;
   font-weight: 600;
-  color: #111;
+  color: #1A1A1A;
 }
 
 .featuresGrid {
@@ -348,19 +371,19 @@
 }
 
 .featureCard {
-  background: #fafafa;
+  background: #E5E5E5;
   padding: 1.5rem;
   border-radius: 12px;
   display: flex;
   align-items: center;
   gap: 1rem;
   font-weight: 600;
-  color: #333;
+  color: #1A1A1A;
 }
 
 .featureIcon {
-  color: #2563EB;
-  background: rgba(37, 99, 235, 0.1);
+  color: #1A1A1A;
+  background: rgba(17, 17, 17, 0.1);
   padding: 0.5rem;
   border-radius: 50%;
 }

@@ -1,5 +1,6 @@
 import './globals.css';
-import Navbar from '@/components/Navbar';
+
+import { AuthProvider } from '@/context/AuthContext';
 
 export const metadata = {
   title: 'AXASZSTORE | Premium Authentic Sneakers',
@@ -10,8 +11,9 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        <Navbar />
-        {children}
+        <AuthProvider>
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );
