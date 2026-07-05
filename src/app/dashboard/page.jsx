@@ -118,9 +118,9 @@ export default function Dashboard() {
                     ? 'When you place an order, it will appear here.'
                     : `You have no ${activeTab.toLowerCase()} orders.`}
                 </p>
-                <Link href="/#products" className="inline-flex items-center gap-2 bg-black px-7 py-3.5 rounded-xl text-[15px] font-semibold text-white hover:bg-gray-900 hover:scale-[1.02] transition-all shadow-md">
-                  <span>Continue Shopping</span>
-                  <ArrowRight size={18} />
+                <Link href="/#products" className="inline-flex items-center gap-2 bg-black px-7 py-3.5 rounded-xl text-[15px] font-semibold !text-white hover:bg-gray-900 hover:scale-[1.02] transition-all shadow-md">
+                  <span className="!text-white">Continue Shopping</span>
+                  <ArrowRight size={18} className="!text-white" />
                 </Link>
               </div>
             ) : (
