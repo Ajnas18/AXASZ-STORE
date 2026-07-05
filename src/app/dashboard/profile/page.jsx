@@ -25,7 +25,7 @@ export default function ProfileDetails() {
   }
 
   return (
-    <div className="min-h-screen bg-[#fafafa] pt-[120px] pb-20 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#fafafa] pt-12 pb-20 px-4 sm:px-6 lg:px-8">
       <div className="max-w-[1400px] mx-auto flex justify-center">
         <div className="w-full max-w-[1200px] flex flex-col md:flex-row gap-8 lg:gap-10">
           
