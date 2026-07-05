@@ -16,7 +16,7 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [hidden, setHidden] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  
+
   // State for new features
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [drawerMode, setDrawerMode] = useState(null); // 'cart' or 'fav' or null
@@ -33,7 +33,7 @@ export default function Navbar() {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
       setScrolled(currentScrollY > 50);
-      
+
       // Hide on scroll down, show on scroll up
       if (currentScrollY > lastScrollY.current && currentScrollY > 100 && !mobileMenuOpen && !isSearchOpen && !drawerMode && !isUserOpen) {
         setHidden(true);
@@ -66,7 +66,7 @@ export default function Navbar() {
               <Image src="/logo.png" alt="AXASZSTORE" width={60} height={60} style={{ objectFit: 'contain' }} />
             </Link>
           </div>
-          
+
           <nav className={`${styles.nav} ${mobileMenuOpen ? styles.navOpen : ''}`}>
             <Link href="/#how-to-order" className={styles.navLink} onClick={() => setMobileMenuOpen(false)}>How to Cop</Link>
             <Link href="/#about" className={styles.navLink} onClick={() => setMobileMenuOpen(false)}>About</Link>
@@ -92,8 +92,8 @@ export default function Navbar() {
               <ShoppingBag size={20} />
               {cartCount > 0 && <span className={styles.badge}>{cartCount}</span>}
             </button>
-            <button 
-              className={styles.mobileMenuBtn} 
+            <button
+              className={styles.mobileMenuBtn}
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
               {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
