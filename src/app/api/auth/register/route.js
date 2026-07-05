@@ -5,7 +5,11 @@ import { hashPassword, createSession } from '@/lib/auth';
 export async function POST(request) {
   try {
     const body = await request.json();
-    const { name, email, phone, password } = body;
+    let { name, email, phone, password } = body;
+    
+    if (email) {
+      email = email.toLowerCase().trim();
+    }
 
     if (!name || !email || !password) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });

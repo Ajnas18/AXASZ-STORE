@@ -24,18 +24,24 @@ async function deleteSneakers() {
     const products = await client.fetch('*[_type == "product"]');
     console.log(`Found ${products.length} products in total.`);
 
-    if (products.length <= 4) {
-      console.log('4 or fewer products found. Nothing to delete.');
+    if (products.length === 0) {
+      console.log('No products found. Nothing to delete.');
       return;
     }
 
-    // Keep the first 4, delete the rest
-    const productsToDelete = products.slice(4);
+    // Delete all products
+    const productsToDelete = products;
     console.log(`Deleting ${productsToDelete.length} products...`);
 
     for (const product of productsToDelete) {
-      console.log(`Deleting ${product._id} - ${product.name}`);
-      await client.delete(product._id);
+      console.log(`Attempting to delete ${product._id} - ${product.name}`);
+      try {
+        await client.delete(product._id);
+        console.log(`✅ Successfully deleted ${product.name}`);
+      } catch (deleteErr) {
+        console.error(`❌ Failed to delete ${product.name} (${product._id}):`);
+        console.error(`   Reason: ${deleteErr.message}`);
+      }
     }
 
     console.log('Successfully deleted all extra products.');
