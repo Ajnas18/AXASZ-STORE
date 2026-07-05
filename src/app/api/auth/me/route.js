@@ -11,7 +11,7 @@ export async function GET() {
     }
 
     const customer = await client.fetch(
-      `*[_type == "customer" && _id == $id][0]{ _id, fullName, email, phone }`,
+      `*[_type == "customer" && _id == $id][0]{ _id, fullName, email, phone, address }`,
       { id: session.customerId }
     );
 
@@ -25,6 +25,7 @@ export async function GET() {
         name: customer.fullName,
         email: customer.email,
         phone: customer.phone,
+        address: customer.address || null,
       }
     });
   } catch (error) {

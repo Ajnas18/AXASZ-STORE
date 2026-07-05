@@ -21,6 +21,18 @@ export default {
       type: 'string',
     },
     {
+      name: 'address',
+      title: 'Address',
+      type: 'object',
+      fields: [
+        { name: 'street', type: 'string', title: 'Street Address' },
+        { name: 'city', type: 'string', title: 'City' },
+        { name: 'state', type: 'string', title: 'State / Province' },
+        { name: 'postalCode', type: 'string', title: 'Postal / Zip Code' },
+        { name: 'country', type: 'string', title: 'Country' }
+      ]
+    },
+    {
       name: 'password',
       title: 'Hashed Password',
       type: 'string',
