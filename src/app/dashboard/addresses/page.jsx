@@ -3,7 +3,6 @@
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
-import DashboardSidebar from '@/components/ui/DashboardSidebar';
 import { MapPin, Plus, Home } from 'lucide-react';
 
 export default function AddressesPage() {
@@ -25,15 +24,8 @@ export default function AddressesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#fafafa] pt-12 pb-20 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-[1400px] mx-auto flex justify-center">
-        <div className="w-full max-w-[1200px] flex flex-col md:flex-row gap-8 lg:gap-10">
-          
-          <DashboardSidebar />
-
-          {/* Main Content */}
-          <div className="flex-1 flex flex-col min-w-0">
-            {/* Header Section */}
+    <div className="w-full">
+      {/* Header Section */}
             <div className="flex items-center gap-5 mb-8">
               <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-[0_2px_12px_rgb(0,0,0,0.04)] border border-gray-100 flex-shrink-0">
                 <MapPin size={26} className="text-black" />
@@ -97,9 +89,6 @@ export default function AddressesPage() {
               )}
 
             </div>
-          </div>
-
-        </div>
       </div>
     </div>
   );

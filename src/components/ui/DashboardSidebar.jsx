@@ -13,7 +13,7 @@ export default function DashboardSidebar() {
   if (!user) return null;
 
   return (
-    <div className="w-full md:w-72 flex-shrink-0 flex flex-col gap-6">
+    <div className="w-full h-full flex flex-col gap-6">
       {/* Navigation Card */}
       <div className="bg-white rounded-[24px] shadow-[0_4px_24px_rgb(0,0,0,0.02)] border border-gray-100 overflow-hidden">
         {/* User Profile Header */}

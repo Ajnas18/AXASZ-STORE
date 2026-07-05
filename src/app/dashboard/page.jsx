@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
 import { LogOut, Package, User, ChevronRight, ChevronDown, ArrowRight, ShieldCheck, Lock, Truck, RefreshCw, Sparkles } from 'lucide-react';
-import DashboardSidebar from '@/components/ui/DashboardSidebar';
 
 export default function Dashboard() {
   const { user, loading, logout } = useAuth();
@@ -53,14 +52,7 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-[#fafafa] pt-12 pb-20 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-[1400px] mx-auto flex justify-center">
-        <div className="w-full max-w-[1200px] flex flex-col md:flex-row gap-8 lg:gap-10">
-          
-          <DashboardSidebar />
-
-          {/* Main Content */}
-          <div className="flex-1 flex flex-col min-w-0">
+    <div className="w-full flex flex-col min-w-0 max-w-[1400px] mx-auto">
             
             {/* Header Section */}
             <div className="flex items-center gap-5 mb-8">
@@ -211,9 +203,6 @@ export default function Dashboard() {
               </div>
             </div>
 
-          </div>
-        </div>
-      </div>
     </div>
   );
 }

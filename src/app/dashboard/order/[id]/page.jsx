@@ -65,8 +65,7 @@ export default function OrderDetails() {
   const currentStatusIndex = statusTimeline.indexOf(order.orderStatus);
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-32 pb-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto">
+    <div className="w-full">
         
         <button 
           onClick={() => router.push('/dashboard')} 
@@ -205,7 +204,7 @@ export default function OrderDetails() {
           </div>
         </div>
 
-      </div>
+        </div>
     </div>
   );
 }
