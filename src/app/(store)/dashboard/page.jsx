@@ -53,15 +53,15 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-32 pb-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#f8f9fa] pt-36 pb-20 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto">
-        <div className="flex flex-col md:flex-row gap-8">
+        <div className="flex flex-col md:flex-row gap-8 lg:gap-12">
           
           <DashboardSidebar />
 
           {/* Main Content */}
           <div className="flex-1">
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+            <div className="bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 p-8 md:p-10">
               <h1 className="text-2xl font-bold text-gray-900 mb-8">Order History</h1>
 
               {ordersLoading ? (
@@ -69,12 +69,14 @@ export default function Dashboard() {
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black"></div>
                 </div>
               ) : orders.length === 0 ? (
-                <div className="text-center py-16 bg-gray-50 rounded-xl border border-dashed border-gray-200">
-                  <Package size={48} className="mx-auto text-gray-400 mb-4" />
-                  <h3 className="text-lg font-bold text-gray-900 mb-2">No orders yet</h3>
-                  <p className="text-gray-500 text-sm mb-6">When you place an order, it will appear here.</p>
-                  <Link href="/" className="inline-block bg-black px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-gray-900 transition-colors" style={{ color: 'white' }}>
-                    continue shopping
+                <div className="text-center py-20 bg-gray-50/50 rounded-3xl border border-dashed border-gray-200 flex flex-col items-center justify-center">
+                  <div className="w-20 h-20 bg-white rounded-full shadow-sm flex items-center justify-center mb-6">
+                    <Package size={32} className="text-gray-400" />
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-3">No orders yet</h3>
+                  <p className="text-gray-500 mb-8 max-w-sm">When you place your first order, it will appear here so you can easily track it.</p>
+                  <Link href="/#products" className="inline-flex items-center justify-center bg-black px-8 py-3.5 rounded-full text-sm font-semibold text-white hover:bg-gray-900 hover:scale-105 transition-all shadow-md">
+                    Start Shopping
                   </Link>
                 </div>
               ) : (

@@ -25,54 +25,54 @@ export default function ProfileDetails() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#f8f9fa] pt-36 pb-20 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto">
-        <div className="flex flex-col md:flex-row gap-8">
+        <div className="flex flex-col md:flex-row gap-8 lg:gap-12">
           
           <DashboardSidebar />
 
           {/* Main Content */}
           <div className="flex-1">
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+            <div className="bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 p-8 md:p-10">
               <h1 className="text-2xl font-bold text-gray-900 mb-8">Profile Details</h1>
 
-              <div className="bg-gray-50 rounded-xl p-6 border border-gray-100 space-y-6">
+              <div className="bg-gray-50/50 rounded-3xl p-8 border border-gray-100 space-y-8">
                 
                 {/* Name */}
-                <div className="flex items-start gap-4">
-                  <div className="p-3 bg-white rounded-lg shadow-sm text-gray-400">
-                    <User size={20} />
+                <div className="flex items-start gap-5">
+                  <div className="p-4 bg-white rounded-2xl shadow-sm text-gray-400">
+                    <User size={24} />
                   </div>
-                  <div>
+                  <div className="pt-1">
                     <p className="text-sm font-medium text-gray-500 mb-1">Full Name</p>
-                    <p className="text-lg font-semibold text-gray-900">{user.name}</p>
+                    <p className="text-xl font-bold text-gray-900">{user.name}</p>
                   </div>
                 </div>
 
                 <div className="h-px bg-gray-200 w-full" />
 
                 {/* Email */}
-                <div className="flex items-start gap-4">
-                  <div className="p-3 bg-white rounded-lg shadow-sm text-gray-400">
-                    <Mail size={20} />
+                <div className="flex items-start gap-5">
+                  <div className="p-4 bg-white rounded-2xl shadow-sm text-gray-400">
+                    <Mail size={24} />
                   </div>
-                  <div>
+                  <div className="pt-1">
                     <p className="text-sm font-medium text-gray-500 mb-1">Email Address</p>
-                    <p className="text-lg font-semibold text-gray-900">{user.email}</p>
+                    <p className="text-xl font-bold text-gray-900">{user.email}</p>
                   </div>
                 </div>
 
                 <div className="h-px bg-gray-200 w-full" />
 
                 {/* Phone */}
-                <div className="flex items-start gap-4">
-                  <div className="p-3 bg-white rounded-lg shadow-sm text-gray-400">
-                    <Phone size={20} />
+                <div className="flex items-start gap-5">
+                  <div className="p-4 bg-white rounded-2xl shadow-sm text-gray-400">
+                    <Phone size={24} />
                   </div>
-                  <div>
+                  <div className="pt-1">
                     <p className="text-sm font-medium text-gray-500 mb-1">Phone Number</p>
-                    <p className="text-lg font-semibold text-gray-900">
-                      {user.phone ? user.phone : <span className="text-gray-400 italic">Not provided</span>}
+                    <p className="text-xl font-bold text-gray-900">
+                      {user.phone ? user.phone : <span className="text-gray-400 italic font-medium">Not provided</span>}
                     </p>
                   </div>
                 </div>
