@@ -14,6 +14,7 @@ import UserDropdown from './ui/UserDropdown';
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
+  const [hidden, setHidden] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   
   // State for new features
@@ -26,14 +27,24 @@ export default function Navbar() {
   const wishlistCount = wishlist.length;
 
   const userBtnRef = useRef(null);
+  const lastScrollY = useRef(0);
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
+      const currentScrollY = window.scrollY;
+      setScrolled(currentScrollY > 50);
+      
+      // Hide on scroll down, show on scroll up
+      if (currentScrollY > lastScrollY.current && currentScrollY > 100 && !mobileMenuOpen && !isSearchOpen && !drawerMode && !isUserOpen) {
+        setHidden(true);
+      } else {
+        setHidden(false);
+      }
+      lastScrollY.current = currentScrollY;
     };
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [mobileMenuOpen, isSearchOpen, drawerMode, isUserOpen]);
 
   // Close user dropdown when clicking outside
   useEffect(() => {
@@ -48,7 +59,7 @@ export default function Navbar() {
 
   return (
     <>
-      <header className={`${styles.header} ${scrolled ? styles.scrolled : styles.transparent}`}>
+      <header className={`${styles.header} ${scrolled ? styles.scrolled : styles.transparent} ${hidden ? styles.hidden : ''}`}>
         <div className={styles.container}>
           <div className={styles.logo}>
             <Link href="/">
