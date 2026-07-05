@@ -1,12 +1,12 @@
 "use client";
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Lock, ArrowRight, Eye, EyeOff } from 'lucide-react';
 import styles from '../login/page.module.css';
 
-export default function ResetPassword() {
+function ResetPasswordForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [password, setPassword] = useState('');
@@ -137,5 +137,13 @@ export default function ResetPassword() {
         </form>
       </motion.div>
     </div>
+  );
+}
+
+export default function ResetPassword() {
+  return (
+    <Suspense fallback={<div className={styles.container}><div className={styles.formWrapper} style={{textAlign: 'center'}}>Loading...</div></div>}>
+      <ResetPasswordForm />
+    </Suspense>
   );
 }
