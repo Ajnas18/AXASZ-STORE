@@ -12,6 +12,11 @@ export default function Dashboard() {
   const router = useRouter();
   const [orders, setOrders] = useState([]);
   const [ordersLoading, setOrdersLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState('All Orders');
+
+  const filteredOrders = activeTab === 'All Orders' 
+    ? orders 
+    : orders.filter(order => order.orderStatus === activeTab);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -71,11 +76,19 @@ export default function Dashboard() {
             {/* Filter & Sort Tabs */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
               <div className="flex items-center gap-1 sm:gap-6 text-[14px] overflow-x-auto pb-2 sm:pb-0 scrollbar-hide">
-                <button className="bg-black text-white px-5 py-2 rounded-full font-medium whitespace-nowrap shadow-md">All Orders</button>
-                <button className="text-gray-400 hover:text-gray-900 font-medium px-3 py-2 transition-colors">Processing</button>
-                <button className="text-gray-400 hover:text-gray-900 font-medium px-3 py-2 transition-colors">Shipped</button>
-                <button className="text-gray-400 hover:text-gray-900 font-medium px-3 py-2 transition-colors">Delivered</button>
-                <button className="text-gray-400 hover:text-gray-900 font-medium px-3 py-2 transition-colors">Cancelled</button>
+                {['All Orders', 'Processing', 'Shipped', 'Delivered', 'Cancelled'].map(tab => (
+                  <button
+                    key={tab}
+                    onClick={() => setActiveTab(tab)}
+                    className={`px-5 py-2.5 rounded-full font-bold whitespace-nowrap transition-colors shadow-sm border ${
+                      activeTab === tab
+                        ? 'bg-white text-black border-gray-200'
+                        : 'text-gray-400 hover:text-gray-900 border-transparent hover:bg-gray-100'
+                    }`}
+                  >
+                    {tab}
+                  </button>
+                ))}
               </div>
               <div className="flex-shrink-0">
                 <button className="flex items-center gap-2 text-[14px] text-gray-700 font-medium bg-white px-4 py-2.5 rounded-xl border border-gray-200 hover:border-gray-300 transition-colors shadow-sm">
@@ -90,7 +103,7 @@ export default function Dashboard() {
               <div className="bg-white rounded-[24px] shadow-[0_4px_24px_rgb(0,0,0,0.02)] border border-gray-100 flex justify-center py-24">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black"></div>
               </div>
-            ) : orders.length === 0 ? (
+            ) : filteredOrders.length === 0 ? (
               <div className="bg-white rounded-[24px] shadow-[0_4px_24px_rgb(0,0,0,0.02)] border border-gray-100 flex flex-col items-center justify-center py-28 px-4 text-center">
                 <div className="relative mb-6">
                   <div className="w-[88px] h-[88px] bg-gray-50 rounded-full flex items-center justify-center">
@@ -100,7 +113,11 @@ export default function Dashboard() {
                   <Sparkles size={16} className="text-gray-300 absolute top-4 -left-4" />
                 </div>
                 <h3 className="text-[22px] font-bold text-gray-900 mb-2">No orders yet</h3>
-                <p className="text-[15px] text-gray-500 mb-8 max-w-[320px]">When you place an order, it will appear here.</p>
+                <p className="text-[15px] text-gray-500 mb-8 max-w-[320px]">
+                  {activeTab === 'All Orders' 
+                    ? 'When you place an order, it will appear here.'
+                    : `You have no ${activeTab.toLowerCase()} orders.`}
+                </p>
                 <Link href="/#products" className="inline-flex items-center gap-2 bg-black px-7 py-3.5 rounded-xl text-[15px] font-semibold text-white hover:bg-gray-900 hover:scale-[1.02] transition-all shadow-md">
                   <span>Continue Shopping</span>
                   <ArrowRight size={18} />
@@ -108,7 +125,7 @@ export default function Dashboard() {
               </div>
             ) : (
               <div className="space-y-4">
-                {orders.map((order) => (
+                {filteredOrders.map((order) => (
                   <Link 
                     href={`/dashboard/order/${order._id}`} 
                     key={order._id}
