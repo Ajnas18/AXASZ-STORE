@@ -90,12 +90,6 @@ export default function Dashboard() {
                   </button>
                 ))}
               </div>
-              <div className="flex-shrink-0">
-                <button className="flex items-center gap-2 text-[14px] text-gray-700 font-medium bg-white px-4 py-2.5 rounded-xl border border-gray-200 hover:border-gray-300 transition-colors shadow-sm">
-                  <span>Sort by: <strong>Newest First</strong></span>
-                  <ChevronDown size={16} className="text-gray-400" />
-                </button>
-              </div>
             </div>
 
             {/* Content Area */}
