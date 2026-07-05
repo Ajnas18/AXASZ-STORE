@@ -52,7 +52,7 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="w-full flex flex-col min-w-0 max-w-[1400px] mx-auto">
+    <div className="w-full flex flex-col min-w-0">
             
             {/* Header Section */}
             <div className="flex items-center gap-5 mb-8">
@@ -99,7 +99,7 @@ export default function Dashboard() {
                   <Sparkles size={16} className="text-gray-300 absolute top-4 -left-4" />
                 </div>
                 <h3 className="text-[22px] font-bold text-gray-900 mb-2">No orders yet</h3>
-                <p className="text-[15px] text-gray-500 mb-8 max-w-[320px]">
+                <p className="text-[15px] text-gray-500 mb-8 max-w-[320px] mx-auto">
                   {activeTab === 'All Orders' 
                     ? 'When you place an order, it will appear here.'
                     : `You have no ${activeTab.toLowerCase()} orders.`}
