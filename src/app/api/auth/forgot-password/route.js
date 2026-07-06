@@ -34,62 +34,48 @@ export async function POST(request) {
       })
       .commit();
 
-    // 4. Send email using Nodemailer
-    const resetUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/reset-password?token=${resetToken}`;
+    // 4. Send email using Nodemailer SMTP
+    const host = request.headers.get('host') || 'localhost:3000';
+    const protocol = request.headers.get('x-forwarded-proto') || 'http';
+    const resetUrl = `${protocol}://${host}/reset-password?token=${resetToken}`;
     
-    let transporter;
-    
-    // Check if SMTP is configured
-    if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
-      transporter = nodemailer.createTransport({
-        host: process.env.SMTP_HOST,
-        port: Number(process.env.SMTP_PORT) || 587,
-        secure: Number(process.env.SMTP_PORT) === 465,
-        auth: {
-          user: process.env.SMTP_USER,
-          pass: process.env.SMTP_PASS,
-        },
-      });
-    } else {
-      // Fallback to Ethereal if no SMTP is configured
-      const testAccount = await nodemailer.createTestAccount();
-      transporter = nodemailer.createTransport({
-        host: "smtp.ethereal.email",
-        port: 587,
-        secure: false, 
-        auth: {
-          user: testAccount.user,
-          pass: testAccount.pass,
-        },
-      });
+    if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASS) {
+      return NextResponse.json({ error: 'SMTP email credentials are not configured in environment variables.' }, { status: 500 });
     }
 
+    const transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: Number(process.env.SMTP_PORT) || 587,
+      secure: Number(process.env.SMTP_PORT) === 465,
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+      },
+    });
+
     const mailOptions = {
-      from: `"AXASZ STORE" <${process.env.SMTP_USER || 'noreply@axaszstore.com'}>`,
+      from: `"AXASZ STORE" <${process.env.SMTP_USER}>`,
       to: customer.email,
       subject: 'Password Reset Request',
       html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2>Password Reset</h2>
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 8px;">
+          <h2 style="color: #333; text-align: center;">AXASZ STORE</h2>
+          <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;" />
+          <h3>Password Reset</h3>
           <p>You recently requested to reset your password for your AXASZ STORE account.</p>
           <p>Click the button below to reset it. This link will expire in 1 hour.</p>
-          <a href="${resetUrl}" style="display: inline-block; padding: 10px 20px; color: #fff; background-color: #000; text-decoration: none; border-radius: 5px;">Reset Password</a>
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="${resetUrl}" style="display: inline-block; padding: 12px 24px; color: #fff; background-color: #000; text-decoration: none; border-radius: 5px; font-weight: bold;">Reset Password</a>
+          </div>
           <p style="margin-top: 20px; font-size: 0.9em; color: #666;">If you didn't request a password reset, you can safely ignore this email.</p>
         </div>
       `,
     };
 
-    let info = await transporter.sendMail(mailOptions);
-    let testUrl = null;
-    
-    if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASS) {
-        testUrl = nodemailer.getTestMessageUrl(info);
-        console.log("Preview URL: %s", testUrl);
-    }
+    await transporter.sendMail(mailOptions);
 
     return NextResponse.json({ 
       message: 'If that email exists, a reset link has been sent.',
-      testUrl: testUrl 
     });
 
   } catch (error) {

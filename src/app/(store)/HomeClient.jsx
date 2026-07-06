@@ -158,22 +158,35 @@ export default function HomeClient({ initialProducts = [] }) {
         </video>
         <div className={styles.heroOverlay}></div>
 
-        <div className={styles.heroContainer}>
-          <div className={styles.heroContent}>
+        <div className={styles.heroContainer} style={{ justifyContent: 'flex-start' }}>
+          <div className={styles.heroContent} style={{ alignItems: 'flex-start', textAlign: 'left' }}>
             <motion.div
               variants={containerVariants}
               initial="hidden"
               animate="visible"
+              style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}
             >
-              <motion.h1 variants={itemFadeUp} className={styles.headline}>
+              <motion.h1 
+                variants={itemFadeUp} 
+                className={styles.headline}
+                style={{ textAlign: 'left' }}
+              >
                 WALK YOUR STORY
               </motion.h1>
 
-              <motion.p variants={itemFadeUp} className={styles.subheading}>
+              <motion.p 
+                variants={itemFadeUp} 
+                className={styles.subheading}
+                style={{ textAlign: 'left', marginLeft: 0, marginRight: 'auto' }}
+              >
                 Premium Sneakers for Every Step
               </motion.p>
 
-              <motion.div variants={itemFadeUp} className={styles.buttonGroup}>
+              <motion.div 
+                variants={itemFadeUp} 
+                className={styles.buttonGroup}
+                style={{ justifyContent: 'flex-start' }}
+              >
                 <Link href="#products" className={`${styles.btn} ${styles.primaryBtn}`}>
                   Shop Now
                 </Link>
