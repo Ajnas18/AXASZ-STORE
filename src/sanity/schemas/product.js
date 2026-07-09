@@ -84,6 +84,20 @@ export const productSchema = {
       },
     },
     {
+      name: 'images',
+      title: 'Sneaker Images Gallery',
+      type: 'array',
+      of: [
+        {
+          type: 'image',
+          options: {
+            hotspot: true,
+          },
+        },
+      ],
+      description: 'Upload additional sneaker photos for the gallery.',
+    },
+    {
       name: 'modelImage',
       title: 'Model Wearing Image',
       type: 'image',

@@ -23,7 +23,12 @@ export default async function TryPage({ params }) {
   // Use modelImage if available, else fallback to standard image
   const displayImageUrl = product.modelImage 
     ? urlFor(product.modelImage).url() 
-    : urlFor(product.image).url();
+    : (product.image 
+        ? urlFor(product.image).url() 
+        : (product.images && product.images.length > 0 
+            ? urlFor(product.images[0]).url() 
+            : '/placeholder1.jpg'));
+
 
   return (
     <main className={styles.container}>

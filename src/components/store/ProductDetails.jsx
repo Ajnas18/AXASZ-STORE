@@ -24,11 +24,64 @@ const getColorHex = (name) => {
   return '#e5e7eb'; // default grey
 };
 
+const getProductGallery = (product) => {
+  if (!product) return ['/placeholder1.jpg'];
+  const gallery = [];
+
+  // 1. Add cover image first if it exists
+  if (product.image) {
+    try {
+      const coverUrl = urlFor(product.image).url();
+      if (coverUrl) {
+        gallery.push(coverUrl);
+      }
+    } catch (e) {
+      console.error("Error resolving cover image:", e);
+    }
+  }
+
+  // 2. Add all images from the images array
+  if (product.images && Array.isArray(product.images) && product.images.length > 0) {
+    product.images.forEach(img => {
+      try {
+        if (img) {
+          const url = urlFor(img).url();
+          if (url && !gallery.includes(url)) {
+            gallery.push(url);
+          }
+        }
+      } catch (e) {
+        console.error("Error resolving gallery image:", e);
+      }
+    });
+  }
+
+  // 3. Add model wearing image if present
+  if (product.modelImage) {
+    try {
+      const modelUrl = urlFor(product.modelImage).url();
+      if (modelUrl && !gallery.includes(modelUrl)) {
+        gallery.push(modelUrl);
+      }
+    } catch (e) {
+      console.error("Error resolving model image:", e);
+    }
+  }
+
+  // Fallback if gallery is empty
+  if (gallery.length === 0) {
+    gallery.push('/placeholder1.jpg');
+  }
+
+  return gallery;
+};
+
 export default function ProductDetails({ product }) {
-  const [selectedSize, setSelectedSize] = useState(product?.sizes[0]);
-  const [selectedColor, setSelectedColor] = useState(product?.colors[0]);
+  const initialGallery = getProductGallery(product);
+  const [selectedSize, setSelectedSize] = useState(product?.sizes?.[0]);
+  const [selectedColor, setSelectedColor] = useState(product?.colors?.[0]);
   const [quantity, setQuantity] = useState(1);
-  const [activeImage, setActiveImage] = useState(product?.image ? urlFor(product.image).url() : '/placeholder1.jpg');
+  const [activeImage, setActiveImage] = useState(initialGallery[0]);
   
   const { addToCart, toggleWishlist, wishlist } = useStore();
   const isWishlisted = wishlist.some((item) => item._id === product?._id || item.id === product?.id);
@@ -36,26 +89,17 @@ export default function ProductDetails({ product }) {
   // Reset state when product changes
   useEffect(() => {
     if (product) {
-      setSelectedSize(product.sizes[0]);
-      setSelectedColor(product.colors[0]);
+      setSelectedSize(product.sizes?.[0]);
+      setSelectedColor(product.colors?.[0]);
       setQuantity(1);
-      setActiveImage(product.image ? urlFor(product.image).url() : '/placeholder1.jpg');
+      const newGallery = getProductGallery(product);
+      setActiveImage(newGallery[0]);
     }
   }, [product]);
 
   if (!product) return null;
 
-  // Setup Gallery Images
-  const imageUrl = product.image ? urlFor(product.image).url() : '/placeholder1.jpg';
-  const galleryImages = [imageUrl];
-  
-  if (product.modelImage) {
-    galleryImages.push(urlFor(product.modelImage).url());
-  } else {
-    // Fallback if no model image is uploaded yet, to keep the gallery UI populated
-    galleryImages.push(imageUrl);
-    galleryImages.push(imageUrl);
-  }
+  const galleryImages = getProductGallery(product);
 
   return (
     <motion.div 

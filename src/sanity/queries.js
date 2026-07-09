@@ -11,7 +11,8 @@ export const ALL_PRODUCTS_QUERY = `*[_type == "product"] | order(_createdAt desc
   sizes,
   colors,
   image,
-  modelImage
+  modelImage,
+  images
 }`;
 
 export const SINGLE_PRODUCT_QUERY = `*[_type == "product" && _id == $id][0] {
@@ -21,5 +22,6 @@ export const SINGLE_PRODUCT_QUERY = `*[_type == "product" && _id == $id][0] {
   productCode,
   price,
   image,
-  modelImage
+  modelImage,
+  images
 }`;

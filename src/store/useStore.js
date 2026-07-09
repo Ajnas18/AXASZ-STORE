@@ -4,15 +4,28 @@ import { urlFor } from '@/sanity/client';
 // Helper to resolve Sanity image object to a string URL
 const resolveProductImage = (product) => {
   if (!product) return '/placeholder1.jpg';
+  
   if (product.image && typeof product.image !== 'string') {
     try {
       return urlFor(product.image).url();
     } catch (e) {
       console.error("Error resolving product image:", e);
-      return '/placeholder1.jpg';
     }
   }
-  return product.image || '/placeholder1.jpg';
+  if (typeof product.image === 'string' && product.image) {
+    return product.image;
+  }
+
+  // Fallback to first image in images array
+  if (product.images && Array.isArray(product.images) && product.images.length > 0) {
+    try {
+      return urlFor(product.images[0]).url();
+    } catch (e) {
+      console.error("Error resolving product from images array:", e);
+    }
+  }
+
+  return '/placeholder1.jpg';
 };
 
 // Helper to unify product IDs (Sanity uses _id, cart code uses id)

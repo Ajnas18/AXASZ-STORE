@@ -45,7 +45,13 @@ export default function ProductCard({ product, onClick }) {
           <Heart size={18} fill={isWishlisted ? 'red' : 'none'} />
         </button>
         <motion.img 
-          src={product.image ? urlFor(product.image).url() : '/placeholder1.jpg'} 
+          src={
+            product.image 
+              ? urlFor(product.image).url() 
+              : (product.images && product.images.length > 0 
+                  ? urlFor(product.images[0]).url() 
+                  : '/placeholder1.jpg')
+          } 
           alt={product.name} 
           className={styles.image}
           variants={{
