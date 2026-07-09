@@ -1,4 +1,4 @@
-export const ALL_PRODUCTS_QUERY = `*[_type == "product"] | order(_createdAt desc)[0...4] {
+export const ALL_PRODUCTS_QUERY = `*[_type == "product"] | order(_createdAt desc)[0...100] {
   _id,
   name,
   brand,

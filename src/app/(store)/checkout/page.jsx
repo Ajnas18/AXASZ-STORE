@@ -11,6 +11,18 @@ import {
   Plus
 } from 'lucide-react';
 import Link from 'next/link';
+import { urlFor } from '@/sanity/client';
+
+const getProductImageUrl = (image) => {
+  if (!image) return '/logo.png';
+  if (typeof image === 'string') return image;
+  try {
+    return urlFor(image).url();
+  } catch (e) {
+    console.error("Error building image URL:", e);
+    return '/logo.png';
+  }
+};
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -76,7 +88,7 @@ export default function CheckoutPage() {
       
       message += `*Order Items:*\n`;
       cart.forEach((item, index) => {
-        message += `${index + 1}. ${item.name} - Size: ${item.size} - Qty: ${item.quantity} - ₹${item.price}\n`;
+        message += `${index + 1}. ${item.name} - Size: ${item.selectedSize} - Qty: ${item.quantity} - ₹${item.price}\n`;
       });
       
       message += `\n*Total Amount:* ₹${totalAmount.toFixed(2)}`;
@@ -284,7 +296,7 @@ export default function CheckoutPage() {
                       {cart.map((item) => (
                         <div key={`${item.id}-${item.selectedSize}`} className="flex gap-4 relative group">
                           <div className="w-20 h-20 rounded-xl bg-gray-100 flex-shrink-0 overflow-hidden border border-gray-50">
-                            <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                            <img src={getProductImageUrl(item.image)} alt={item.name} className="w-full h-full object-cover" />
                           </div>
                           <div className="flex-1 flex flex-col justify-center">
                             <div className="flex justify-between items-start pr-6">

@@ -5,6 +5,18 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
 import { LogOut, Package, User, ChevronRight, ChevronDown, ArrowRight, ShieldCheck, Lock, Truck, RefreshCw, Sparkles } from 'lucide-react';
+import { urlFor } from '@/sanity/client';
+
+const getProductImageUrl = (image) => {
+  if (!image) return '/logo.png';
+  if (typeof image === 'string') return image;
+  try {
+    return urlFor(image).url();
+  } catch (e) {
+    console.error("Error building image URL:", e);
+    return '/logo.png';
+  }
+};
 
 export default function Dashboard() {
   const { user, loading, logout } = useAuth();
@@ -145,7 +157,7 @@ export default function Dashboard() {
                       {order.products?.slice(0, 4).map((item, index) => (
                         <div key={index} className="w-16 h-16 bg-gray-50 rounded-xl border border-gray-100 overflow-hidden flex-shrink-0">
                           {item.image ? (
-                            <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                            <img src={getProductImageUrl(item.image)} alt={item.name} className="w-full h-full object-cover" />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center text-gray-300">
                               <Package size={20} />

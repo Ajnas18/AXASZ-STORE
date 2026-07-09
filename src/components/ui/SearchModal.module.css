@@ -123,3 +123,21 @@
   from { transform: translateY(-100%); }
   to { transform: translateY(0); }
 }
+
+@media (max-width: 768px) {
+  .searchContainer {
+    padding: 1.5rem 1rem;
+  }
+  
+  .searchHeader {
+    gap: 1rem;
+  }
+  
+  .searchInput {
+    font-size: 1.1rem;
+  }
+  
+  .suggestions {
+    margin-top: 1.5rem;
+  }
+}

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Poppins:wght@500;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poppins:wght@500;700;800;900&display=swap');
 @import "tailwindcss";
 
 :root {
@@ -6,9 +6,9 @@
   --color-background: #FFFFFF;
   --color-accent: #1A1A1A;
   --color-secondary: #E5E5E5;
-  --color-text: #1A1A1A;
+  --color-text: #999999;
   --color-text-muted: #7A7A7A;
-  --font-body: 'Inter', sans-serif;
+  --font-body: 'Lato', sans-serif;
   --font-heading: 'Poppins', sans-serif;
 }
 
@@ -22,9 +22,12 @@ body {
   font-family: var(--font-body);
   background-color: var(--color-background);
   color: var(--color-text);
+  font-size: 14px;
+  word-wrap: break-word;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
 }
+
 
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
@@ -41,4 +44,12 @@ button {
   border: none;
   background: none;
   cursor: pointer;
+}
+
+p {
+  margin: 0 0 10px;
+}
+
+.font-playfair {
+  font-family: 'Playfair Display', serif;
 }

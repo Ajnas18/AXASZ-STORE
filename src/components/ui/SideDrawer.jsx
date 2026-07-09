@@ -3,6 +3,18 @@ import { useRouter } from 'next/navigation';
 import { X, ShoppingBag, Heart, Trash2, Plus, Minus } from 'lucide-react';
 import styles from './SideDrawer.module.css';
 import { useStore } from '@/store/useStore';
+import { urlFor } from '@/sanity/client';
+
+const getProductImageUrl = (image) => {
+  if (!image) return '/logo.png';
+  if (typeof image === 'string') return image;
+  try {
+    return urlFor(image).url();
+  } catch (e) {
+    console.error("Error building image URL:", e);
+    return '/logo.png';
+  }
+};
 
 export default function SideDrawer({ isOpen, onClose, mode }) {
   const router = useRouter();
@@ -28,12 +40,17 @@ export default function SideDrawer({ isOpen, onClose, mode }) {
   // Calculate cart subtotal
   const subtotal = cart.reduce((total, item) => total + item.price * item.quantity, 0);
 
+  const handleCheckoutClick = () => {
+    onClose();
+    router.push('/checkout');
+  };
+
   return (
     <>
       <div className={styles.overlay} onClick={onClose} />
-      <div className={`${styles.drawer} ${isOpen ? styles.open : ''}`}>
+      <div className={`${styles.drawer} ${isOpen ? styles.open : ''}`} onClick={(e) => e.stopPropagation()}>
         <div className={styles.header}>
-          <h2>{isCart ? 'Your Cart' : 'Your Wishlist'}</h2>
+          <h2>{isCart ? 'Shopping Cart' : 'My Wishlist'}</h2>
           <button className={styles.closeBtn} onClick={onClose} aria-label="Close drawer">
             <X size={24} />
           </button>
@@ -42,11 +59,9 @@ export default function SideDrawer({ isOpen, onClose, mode }) {
         <div className={styles.content}>
           {isEmpty ? (
             <div className={styles.emptyState}>
-              {isCart ? (
-                <ShoppingBag size={48} className={styles.emptyIcon} />
-              ) : (
-                <Heart size={48} className={styles.emptyIcon} />
-              )}
+              <div className={styles.emptyIcon}>
+                {isCart ? <ShoppingBag size={48} /> : <Heart size={48} />}
+              </div>
               <h3>{isCart ? 'Your cart is empty' : 'Your wishlist is empty'}</h3>
               <p>Looks like you haven't added anything yet.</p>
               <button className={styles.actionBtn} onClick={onClose}>
@@ -57,7 +72,7 @@ export default function SideDrawer({ isOpen, onClose, mode }) {
             <div className={styles.itemList}>
               {items.map((item) => (
                 <div key={`${item.id}-${isCart ? item.selectedSize : 'fav'}`} className={styles.itemCard}>
-                  <img src={item.image} alt={item.name} className={styles.itemImage} />
+                  <img src={getProductImageUrl(item.image)} alt={item.name} className={styles.itemImage} />
                   <div className={styles.itemDetails}>
                     <div className={styles.itemHeader}>
                       <h4>{item.name}</h4>
