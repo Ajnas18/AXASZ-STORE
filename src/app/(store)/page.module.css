@@ -135,7 +135,8 @@
 .subheading {
   font-size: 1.5rem;
   opacity: 0.95;
-  font-weight: 500;
+  font-weight: 700;
+  font-style: italic;
   margin-bottom: 3rem;
   max-width: 600px;
   margin-left: 0 !important;
@@ -222,48 +223,42 @@
 }
 
 @media (max-width: 768px) {
-  .heroContainer {
-    padding: 0 1.5rem !important;
-  }
   .headline { font-size: 3.5rem; }
-  .splitHeadline { 
-    font-size: 7.8vw; 
-    margin-bottom: 2rem;
-  }
+  .splitHeadline { font-size: 3.0rem; }
   .splitHeadline span:nth-child(3) {
     font-size: 0.18em;
     letter-spacing: 0.3em;
-    padding: 3px 0;
   }
   .splitHeadline:hover span:nth-child(1) {
-    transform: translateY(-10px);
+    transform: translateY(-8px);
   }
   .splitHeadline:hover span:nth-child(2) {
-    transform: translateY(10px);
+    transform: translateY(8px);
   }
+  .subheading { font-size: 1.25rem; }
   .buttonGroup { flex-direction: column; width: 100%; }
   .btn { width: 100%; }
   .heroShoe { max-width: 100%; }
 }
 
 @media (max-width: 480px) {
-  .heroContainer {
-    padding: 0 1rem !important;
-  }
   .splitHeadline {
-    font-size: 8.5vw;
-    margin-bottom: 1.5rem;
-  }
-  .splitHeadline:hover span:nth-child(1) {
-    transform: translateY(-7px);
-  }
-  .splitHeadline:hover span:nth-child(2) {
-    transform: translateY(7px);
+    font-size: 2.1rem;
   }
   .splitHeadline span:nth-child(3) {
     font-size: 0.16em;
     letter-spacing: 0.22em;
     padding: 2px 0;
+  }
+  .splitHeadline:hover span:nth-child(1) {
+    transform: translateY(-6px);
+  }
+  .splitHeadline:hover span:nth-child(2) {
+    transform: translateY(6px);
+  }
+  .subheading {
+    font-size: 1.05rem;
+    margin-bottom: 2rem;
   }
 }
 .storeContainer {
