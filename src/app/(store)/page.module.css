@@ -222,11 +222,18 @@
 }
 
 @media (max-width: 768px) {
+  .heroContainer {
+    padding: 0 1.5rem !important;
+  }
   .headline { font-size: 3.5rem; }
-  .splitHeadline { font-size: 3.2rem; }
+  .splitHeadline { 
+    font-size: 7.8vw; 
+    margin-bottom: 2rem;
+  }
   .splitHeadline span:nth-child(3) {
     font-size: 0.18em;
     letter-spacing: 0.3em;
+    padding: 3px 0;
   }
   .splitHeadline:hover span:nth-child(1) {
     transform: translateY(-10px);
@@ -237,6 +244,27 @@
   .buttonGroup { flex-direction: column; width: 100%; }
   .btn { width: 100%; }
   .heroShoe { max-width: 100%; }
+}
+
+@media (max-width: 480px) {
+  .heroContainer {
+    padding: 0 1rem !important;
+  }
+  .splitHeadline {
+    font-size: 8.5vw;
+    margin-bottom: 1.5rem;
+  }
+  .splitHeadline:hover span:nth-child(1) {
+    transform: translateY(-7px);
+  }
+  .splitHeadline:hover span:nth-child(2) {
+    transform: translateY(7px);
+  }
+  .splitHeadline span:nth-child(3) {
+    font-size: 0.16em;
+    letter-spacing: 0.22em;
+    padding: 2px 0;
+  }
 }
 .storeContainer {
   padding-top: 6rem; /* Account for navbar */
