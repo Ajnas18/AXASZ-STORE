@@ -2,16 +2,45 @@ import { NextResponse } from 'next/server';
 import { client } from '@/sanity/client';
 import { v4 as uuidv4 } from 'uuid';
 import nodemailer from 'nodemailer';
+import { rateLimit, getClientIp } from '@/lib/rateLimit';
+
+// Input sanitization helper to strip HTML tags
+function sanitizeString(str) {
+  if (typeof str !== 'string') return '';
+  return str.replace(/<[^>]*>/g, '').trim();
+}
+
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export async function POST(request) {
   try {
-    const { email } = await request.json();
+    // 1. Rate Limiting: Max 3 password reset requests per 15 minutes per IP
+    const ip = getClientIp(request);
+    const rateLimitResult = await rateLimit(`forgot-password-${ip}`, 3, 15 * 60 * 1000);
+    
+    if (!rateLimitResult.success) {
+      return NextResponse.json(
+        { error: `Too many password reset attempts. Please try again in ${rateLimitResult.resetSeconds} seconds.` },
+        { status: 429 }
+      );
+    }
 
+    const body = await request.json();
+    let { email } = body;
+
+    // 2. Formatting & Sanitization
+    email = sanitizeString(email).toLowerCase();
+
+    // 3. Validation Rules
     if (!email) {
       return NextResponse.json({ error: 'Email is required' }, { status: 400 });
     }
 
-    // 1. Find user in Sanity
+    if (!emailRegex.test(email)) {
+      return NextResponse.json({ error: 'Invalid email address format' }, { status: 400 });
+    }
+
+    // 4. Find user in Sanity
     const customer = await client.fetch(
       `*[_type == "customer" && email == $email][0]`,
       { email }
@@ -21,11 +50,11 @@ export async function POST(request) {
       return NextResponse.json({ error: 'This email is not registered in our store.' }, { status: 404 });
     }
 
-    // 2. Generate a token and expiration
+    // 5. Generate a token and expiration
     const resetToken = uuidv4();
     const tokenExpiration = new Date(Date.now() + 3600000); // 1 hour from now
 
-    // 3. Save token in Sanity
+    // 6. Save token in Sanity
     await client
       .patch(customer._id)
       .set({
@@ -34,7 +63,7 @@ export async function POST(request) {
       })
       .commit();
 
-    // 4. Send email using Nodemailer SMTP
+    // 7. Send email using Nodemailer SMTP
     const host = request.headers.get('host') || 'localhost:3000';
     const protocol = request.headers.get('x-forwarded-proto') || 'http';
     const resetUrl = `${protocol}://${host}/reset-password?token=${resetToken}`;

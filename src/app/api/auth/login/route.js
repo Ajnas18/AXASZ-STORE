@@ -1,18 +1,43 @@
 import { NextResponse } from 'next/server';
 import { client } from '@/sanity/client';
 import { verifyPassword, createSession } from '@/lib/auth';
+import { rateLimit, getClientIp } from '@/lib/rateLimit';
+
+// Input sanitization helper to strip HTML tags
+function sanitizeString(str) {
+  if (typeof str !== 'string') return '';
+  return str.replace(/<[^>]*>/g, '').trim();
+}
+
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export async function POST(request) {
   try {
-    const body = await request.json();
-    let { email, password } = body;
+    // 1. Rate Limiting: Max 10 login attempts per 10 minutes per IP
+    const ip = getClientIp(request);
+    const rateLimitResult = await rateLimit(`login-${ip}`, 10, 10 * 60 * 1000);
     
-    if (email) {
-      email = email.toLowerCase().trim();
+    if (!rateLimitResult.success) {
+      return NextResponse.json(
+        { error: `Too many login attempts. Please try again in ${rateLimitResult.resetSeconds} seconds.` },
+        { status: 429 }
+      );
     }
 
+    const body = await request.json();
+    let { email, password } = body;
+
+    // 2. Formatting & Sanitization
+    email = sanitizeString(email).toLowerCase();
+    password = typeof password === 'string' ? password : '';
+
+    // 3. Validation Rules
     if (!email || !password) {
       return NextResponse.json({ error: 'Email and password are required' }, { status: 400 });
+    }
+
+    if (!emailRegex.test(email)) {
+      return NextResponse.json({ error: 'Invalid email address format' }, { status: 400 });
     }
 
     // Find customer by email
@@ -22,6 +47,7 @@ export async function POST(request) {
     );
 
     if (!customer) {
+      // Return a generic error to prevent email enumeration attacks
       return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
     }
 

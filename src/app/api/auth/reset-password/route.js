@@ -1,20 +1,44 @@
 import { NextResponse } from 'next/server';
 import { client } from '@/sanity/client';
 import { hashPassword } from '@/lib/auth';
+import { rateLimit, getClientIp } from '@/lib/rateLimit';
+
+// Input sanitization helper to strip HTML tags
+function sanitizeString(str) {
+  if (typeof str !== 'string') return '';
+  return str.replace(/<[^>]*>/g, '').trim();
+}
 
 export async function POST(request) {
   try {
-    const { token, newPassword } = await request.json();
+    // 1. Rate Limiting: Max 5 attempts per 10 minutes per IP
+    const ip = getClientIp(request);
+    const rateLimitResult = await rateLimit(`reset-password-${ip}`, 5, 10 * 60 * 1000);
+    
+    if (!rateLimitResult.success) {
+      return NextResponse.json(
+        { error: `Too many requests. Please try again in ${rateLimitResult.resetSeconds} seconds.` },
+        { status: 429 }
+      );
+    }
 
+    const body = await request.json();
+    let { token, newPassword } = body;
+
+    // 2. Formatting & Sanitization
+    token = sanitizeString(token);
+    newPassword = typeof newPassword === 'string' ? newPassword : '';
+
+    // 3. Validation Rules
     if (!token || !newPassword) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
-    if (newPassword.length < 6) {
-      return NextResponse.json({ error: 'Password must be at least 6 characters' }, { status: 400 });
+    if (newPassword.length < 8) {
+      return NextResponse.json({ error: 'Password must be at least 8 characters' }, { status: 400 });
     }
 
-    // 1. Find user with the matching token
+    // 4. Find user with the matching token
     const customer = await client.fetch(
       `*[_type == "customer" && resetPasswordToken == $token][0]`,
       { token }
@@ -24,7 +48,7 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Invalid or expired password reset token' }, { status: 400 });
     }
 
-    // 2. Check if token is expired
+    // 5. Check if token is expired
     const now = new Date();
     const expiresAt = new Date(customer.resetPasswordExpires);
 
@@ -38,10 +62,10 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Password reset token has expired' }, { status: 400 });
     }
 
-    // 3. Hash the new password
+    // 6. Hash the new password
     const hashedPassword = await hashPassword(newPassword);
 
-    // 4. Update the customer in Sanity: set new password, unset token fields
+    // 7. Update the customer in Sanity: set new password, unset token fields
     await client
       .patch(customer._id)
       .set({ password: hashedPassword })

@@ -66,6 +66,72 @@
   text-align: left !important;
 }
 
+.splitHeadline {
+  position: relative;
+  font-size: 6rem;
+  line-height: 1.05;
+  font-weight: 900;
+  text-transform: uppercase;
+  color: transparent !important;
+  margin-bottom: 2.5rem;
+  cursor: pointer;
+  user-select: none;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.splitHeadline span:nth-child(1) {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  color: #ffffff;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  clip-path: polygon(0 0, 100% 0, 100% 50%, 0 50%);
+  overflow: hidden;
+}
+
+.splitHeadline:hover span:nth-child(1) {
+  transform: translateY(-18px);
+}
+
+.splitHeadline span:nth-child(2) {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  color: #ffffff;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  clip-path: polygon(0 50%, 100% 50%, 100% 100%, 0 100%);
+  overflow: hidden;
+}
+
+.splitHeadline:hover span:nth-child(2) {
+  transform: translateY(18px);
+}
+
+.splitHeadline span:nth-child(3) {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%) scaleY(0);
+  width: 100%;
+  color: #ffffff;
+  background: #000000;
+  font-size: 0.22em;
+  font-weight: 800;
+  letter-spacing: 0.5em;
+  text-align: center;
+  padding: 4px 0;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  transform-origin: center;
+}
+
+.splitHeadline:hover span:nth-child(3) {
+  transform: translateY(-50%) scaleY(1);
+}
+
+
 .subheading {
   font-size: 1.5rem;
   opacity: 0.95;
@@ -152,10 +218,22 @@
     justify-content: center;
   }
   .headline { font-size: 4.5rem; }
+  .splitHeadline { font-size: 4.5rem; }
 }
 
 @media (max-width: 768px) {
   .headline { font-size: 3.5rem; }
+  .splitHeadline { font-size: 3.2rem; }
+  .splitHeadline span:nth-child(3) {
+    font-size: 0.18em;
+    letter-spacing: 0.3em;
+  }
+  .splitHeadline:hover span:nth-child(1) {
+    transform: translateY(-10px);
+  }
+  .splitHeadline:hover span:nth-child(2) {
+    transform: translateY(10px);
+  }
   .buttonGroup { flex-direction: column; width: 100%; }
   .btn { width: 100%; }
   .heroShoe { max-width: 100%; }

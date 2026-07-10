@@ -168,10 +168,12 @@ export default function HomeClient({ initialProducts = [] }) {
             >
               <motion.h1 
                 variants={itemFadeUp} 
-                className={styles.headline}
-                style={{ textAlign: 'left' }}
+                className={styles.splitHeadline}
               >
                 WALK YOUR STORY
+                <span>WALK YOUR STORY</span>
+                <span>WALK YOUR STORY</span>
+                <span>AXASZ STORE</span>
               </motion.h1>
 
               <motion.p 

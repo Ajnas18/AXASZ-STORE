@@ -5,7 +5,6 @@ import { useParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
 import { ArrowLeft, Package, MapPin, CreditCard, Clock, CheckCircle } from 'lucide-react';
-import { client } from '@/sanity/client';
 import { urlFor } from '@/sanity/client';
 
 const getProductImageUrl = (image) => {
@@ -41,11 +40,13 @@ export default function OrderDetails() {
 
   const fetchOrderDetails = async () => {
     try {
-      const data = await client.fetch(
-        `*[_type == "order" && _id == $id && customer._ref == $customerId][0]`,
-        { id, customerId: user.id }
-      );
-      setOrder(data);
+      const res = await fetch(`/api/orders/${id}`);
+      if (res.ok) {
+        const data = await res.json();
+        setOrder(data.order);
+      } else {
+        console.error('Failed to fetch order details, status:', res.status);
+      }
     } catch (error) {
       console.error('Error fetching order details:', error);
     } finally {
