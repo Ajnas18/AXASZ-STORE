@@ -1,5 +1,3 @@
-import AdminAuth from './AdminAuth';
-
 export const metadata = {
   title: 'AXASZ STORE Admin',
   description: 'Admin dashboard for AXASZ STORE',
@@ -7,8 +5,8 @@ export const metadata = {
 
 export default function AdminLayout({ children }) {
   return (
-    <AdminAuth>
+    <>
       {children}
-    </AdminAuth>
+    </>
   );
 }
