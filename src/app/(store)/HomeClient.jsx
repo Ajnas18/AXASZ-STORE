@@ -216,9 +216,28 @@ export default function HomeClient({ initialProducts = [] }) {
             </div>
             <div className={styles.aboutTitleWrapper}>
               <h2 className={styles.aboutTitleLarge}>
-                <span>WHO WE</span>
-                <br />
-                <span>ARE ?</span>
+                <span style={{ display: 'block', overflow: 'hidden' }}>
+                  <motion.span
+                    initial={{ y: '100%' }}
+                    whileInView={{ y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                    style={{ display: 'block' }}
+                  >
+                    WHO WE
+                  </motion.span>
+                </span>
+                <span style={{ display: 'block', overflow: 'hidden' }}>
+                  <motion.span
+                    initial={{ y: '100%' }}
+                    whileInView={{ y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.8, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+                    style={{ display: 'block' }}
+                  >
+                    ARE ?
+                  </motion.span>
+                </span>
               </h2>
             </div>
           </motion.div>
