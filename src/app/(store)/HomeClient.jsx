@@ -215,30 +215,61 @@ export default function HomeClient({ initialProducts = [] }) {
               <img src="/logo.png" alt="AXASZ STORE Logo" className={styles.aboutLogo} />
             </div>
             <div className={styles.aboutTitleWrapper}>
-              <h2 className={styles.aboutTitleLarge}>
-                <span style={{ display: 'block', overflow: 'hidden' }}>
-                  <motion.span
-                    initial={{ y: '100%' }}
-                    whileInView={{ y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                    style={{ display: 'block' }}
-                  >
-                    WHO WE
-                  </motion.span>
+              <motion.h2 
+                className={styles.aboutTitleLarge}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: "-50px" }}
+                variants={{
+                  hidden: {},
+                  visible: {
+                    transition: {
+                      staggerChildren: 0.06,
+                      delayChildren: 0.1
+                    }
+                  }
+                }}
+              >
+                <span style={{ display: 'inline-block' }}>
+                  {"WHO WE".split("").map((char, index) => (
+                    <motion.span
+                      key={index}
+                      style={{ display: 'inline-block' }}
+                      variants={{
+                        hidden: { opacity: 0, y: 35, rotateX: -30 },
+                        visible: { 
+                          opacity: 1, 
+                          y: 0, 
+                          rotateX: 0, 
+                          transition: { type: 'spring', damping: 10, stiffness: 100 } 
+                        }
+                      }}
+                    >
+                      {char === " " ? "\u00A0" : char}
+                    </motion.span>
+                  ))}
                 </span>
-                <span style={{ display: 'block', overflow: 'hidden' }}>
-                  <motion.span
-                    initial={{ y: '100%' }}
-                    whileInView={{ y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.8, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
-                    style={{ display: 'block' }}
-                  >
-                    ARE ?
-                  </motion.span>
+                <br />
+                <span style={{ display: 'inline-block' }}>
+                  {"ARE ?".split("").map((char, index) => (
+                    <motion.span
+                      key={index}
+                      style={{ display: 'inline-block' }}
+                      variants={{
+                        hidden: { opacity: 0, y: 35, rotateX: -30 },
+                        visible: { 
+                          opacity: 1, 
+                          y: 0, 
+                          rotateX: 0, 
+                          transition: { type: 'spring', damping: 10, stiffness: 100 } 
+                        }
+                      }}
+                    >
+                      {char === " " ? "\u00A0" : char}
+                    </motion.span>
+                  ))}
                 </span>
-              </h2>
+              </motion.h2>
             </div>
           </motion.div>
 
