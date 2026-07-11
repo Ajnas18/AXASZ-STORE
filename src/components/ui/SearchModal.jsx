@@ -63,10 +63,6 @@ export default function SearchModal({ isOpen, onClose }) {
     };
   }, [isOpen]);
 
-  if (!isOpen) return null;
-
-  const popularSearches = ["Nike Air Max", "Adidas Yeezy", "New Balance 550", "Running Shoes"];
-
   // Filter products by search terms matching name, brand, or SKU
   const filteredProducts = useMemo(() => {
     const trimmed = query.trim().toLowerCase();
@@ -82,6 +78,10 @@ export default function SearchModal({ isOpen, onClose }) {
       );
     });
   }, [query, products]);
+
+  if (!isOpen) return null;
+
+  const popularSearches = ["Nike Air Max", "Adidas Yeezy", "New Balance 550", "Running Shoes"];
 
   return (
     <div className={styles.modalOverlay}>
