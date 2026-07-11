@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useAnimate } from 'framer-motion';
 import Link from 'next/link';
 import { SlidersHorizontal, ChevronDown, Calendar, Users, ShieldCheck, Star, ThumbsUp, Truck, Camera, Mail, MessageCircle, Phone, MapPin, Send, Lock, Headset } from 'lucide-react';
 import { Playfair_Display } from 'next/font/google';
@@ -35,6 +35,47 @@ const WhatsappIcon = ({ size = 24, color = "currentColor" }) => (
 );
 
 export default function HomeClient({ initialProducts = [] }) {
+  // Ripple wave animation controls
+  const [scope, animate] = useAnimate();
+  const line1 = useMemo(() => "WALK YOUR".split(""), []);
+  const line2 = useMemo(() => "STORY".split(""), []);
+
+  const handleLetterClick = (clickedIdx) => {
+    // Total indices from 0 to 14 (length of "WALK YOUR STORY")
+    const totalIndices = 15;
+    for (let idx = 0; idx < totalIndices; idx++) {
+      if (idx === 4 || idx === 9) continue; // Skip spaces
+      const isClicked = idx === clickedIdx;
+      const dist = Math.abs(idx - clickedIdx);
+      const delay = dist * 0.03; // 30ms delay
+
+      animate(
+        `span[data-index="${idx}"]`,
+        {
+          y: isClicked ? [0, -20, 2, 0] : [0, -7, 0],
+          scale: isClicked ? [1, 1.35, 0.95, 1] : [1, 1.12, 1],
+          color: isClicked ? ["#ffffff", "#ffffff", "#ffffff"] : ["#ffffff", "#d8d8d8", "#ffffff"],
+          textShadow: isClicked
+            ? [
+                "0 4px 20px rgba(0,0,0,0.5)",
+                "0 0 30px rgba(255,255,255,1), 0 0 60px rgba(255,255,255,0.8)",
+                "0 4px 20px rgba(0,0,0,0.5)"
+              ]
+            : [
+                "0 4px 20px rgba(0,0,0,0.5)",
+                "0 0 15px rgba(255,255,255,0.4)",
+                "0 4px 20px rgba(0,0,0,0.5)"
+              ]
+        },
+        {
+          duration: isClicked ? 0.7 : 0.45,
+          delay: delay,
+          ease: "easeOut"
+        }
+      );
+    }
+  };
+
   // Store State
   const [activeBrand, setActiveBrand] = useState("All Brands");
   const [selectedSize, setSelectedSize] = useState("All Sizes");
@@ -167,13 +208,69 @@ export default function HomeClient({ initialProducts = [] }) {
               style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}
             >
               <motion.h1 
+                ref={scope}
                 variants={itemFadeUp} 
-                className={styles.splitHeadline}
+                className={styles.headline}
+                style={{ textAlign: 'left', display: 'flex', flexDirection: 'column', userSelect: 'none' }}
               >
-                WALK YOUR STORY
-                <span>WALK YOUR STORY</span>
-                <span>WALK YOUR STORY</span>
-                <span>AXASZ STORE</span>
+                {/* Line 1: WALK YOUR */}
+                <div style={{ display: 'block', whiteSpace: 'nowrap' }}>
+                  {line1.map((char, index) => {
+                    const globalIdx = index; // 0 to 8
+                    if (char === ' ') {
+                      return (
+                        <span key={index} style={{ display: 'inline-block', width: '0.28em' }}>
+                          &nbsp;
+                        </span>
+                      );
+                    }
+                    return (
+                      <motion.span
+                        key={index}
+                        data-index={globalIdx}
+                        onClick={() => handleLetterClick(globalIdx)}
+                        style={{ 
+                          display: 'inline-block', 
+                          cursor: 'pointer',
+                          transformOrigin: 'center center'
+                        }}
+                        whileHover={{ 
+                          y: -4, 
+                          scale: 1.05, 
+                          transition: { duration: 0.2, ease: "easeOut" } 
+                        }}
+                      >
+                        {char}
+                      </motion.span>
+                    );
+                  })}
+                </div>
+
+                {/* Line 2: STORY */}
+                <div style={{ display: 'block', whiteSpace: 'nowrap' }}>
+                  {line2.map((char, index) => {
+                    const globalIdx = index + 10; // 10 to 14 (index 9 is the space between lines)
+                    return (
+                      <motion.span
+                        key={index}
+                        data-index={globalIdx}
+                        onClick={() => handleLetterClick(globalIdx)}
+                        style={{ 
+                          display: 'inline-block', 
+                          cursor: 'pointer',
+                          transformOrigin: 'center center'
+                        }}
+                        whileHover={{ 
+                          y: -4, 
+                          scale: 1.05, 
+                          transition: { duration: 0.2, ease: "easeOut" } 
+                        }}
+                      >
+                        {char}
+                      </motion.span>
+                    );
+                  })}
+                </div>
               </motion.h1>
 
               <motion.p 
