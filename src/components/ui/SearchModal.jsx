@@ -1,8 +1,9 @@
+"use client";
+
 import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { Search, X, TrendingUp } from 'lucide-react';
 import Link from 'next/link';
-import { client, urlFor } from '@/sanity/client';
-import { ALL_PRODUCTS_QUERY } from '@/sanity/queries';
+import { urlFor } from '@/sanity/client';
 import styles from './SearchModal.module.css';
 
 export default function SearchModal({ isOpen, onClose }) {
@@ -26,7 +27,7 @@ export default function SearchModal({ isOpen, onClose }) {
     };
   }, [isOpen]);
 
-  // Fetch products from Sanity when modal opens
+  // Fetch products from our internal API when modal opens
   useEffect(() => {
     if (!isOpen) {
       setQuery(''); // Reset query when modal closes
@@ -37,9 +38,14 @@ export default function SearchModal({ isOpen, onClose }) {
     const fetchProducts = async () => {
       setLoading(true);
       try {
-        const data = await client.fetch(ALL_PRODUCTS_QUERY);
-        if (isMounted) {
-          setProducts(data || []);
+        const response = await fetch('/api/products');
+        if (response.ok) {
+          const data = await response.json();
+          if (isMounted) {
+            setProducts(data || []);
+          }
+        } else {
+          console.error("Failed to fetch products from search API");
         }
       } catch (err) {
         console.error("Error fetching products in SearchModal:", err);
