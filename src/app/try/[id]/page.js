@@ -1,4 +1,4 @@
-import { client } from '@/sanity/client';
+import { readClient } from '@/sanity/client';
 import { SINGLE_PRODUCT_QUERY } from '@/sanity/queries';
 import { urlFor } from '@/sanity/client';
 import Link from 'next/link';
@@ -9,7 +9,7 @@ export default async function TryPage({ params }) {
   const { id } = await params;
   let product = null;
   try {
-    product = await client.fetch(SINGLE_PRODUCT_QUERY, { id });
+    product = await readClient.fetch(SINGLE_PRODUCT_QUERY, { id });
   } catch (err) {
     console.error("Failed to fetch product detail from Sanity:", err);
   }
