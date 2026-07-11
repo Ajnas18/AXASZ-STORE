@@ -1,10 +1,17 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { Search, X, TrendingUp } from 'lucide-react';
+import Link from 'next/link';
+import { client, urlFor } from '@/sanity/client';
+import { ALL_PRODUCTS_QUERY } from '@/sanity/queries';
 import styles from './SearchModal.module.css';
 
 export default function SearchModal({ isOpen, onClose }) {
   const inputRef = useRef(null);
+  const [query, setQuery] = useState('');
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(false);
 
+  // Lock scroll when open and focus search input
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
@@ -19,9 +26,56 @@ export default function SearchModal({ isOpen, onClose }) {
     };
   }, [isOpen]);
 
+  // Fetch products from Sanity when modal opens
+  useEffect(() => {
+    if (!isOpen) {
+      setQuery(''); // Reset query when modal closes
+      return;
+    }
+
+    let isMounted = true;
+    const fetchProducts = async () => {
+      setLoading(true);
+      try {
+        const data = await client.fetch(ALL_PRODUCTS_QUERY);
+        if (isMounted) {
+          setProducts(data || []);
+        }
+      } catch (err) {
+        console.error("Error fetching products in SearchModal:", err);
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchProducts();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   const popularSearches = ["Nike Air Max", "Adidas Yeezy", "New Balance 550", "Running Shoes"];
+
+  // Filter products by search terms matching name, brand, or SKU
+  const filteredProducts = useMemo(() => {
+    const trimmed = query.trim().toLowerCase();
+    if (!trimmed) return [];
+    const searchTerms = trimmed.split(/\s+/).filter(Boolean);
+
+    return products.filter((p) => {
+      const name = (p.name || '').toLowerCase();
+      const brand = (p.brand || '').toLowerCase();
+      const code = (p.productCode || '').toLowerCase();
+      return searchTerms.every(term => 
+        name.includes(term) || brand.includes(term) || code.includes(term)
+      );
+    });
+  }, [query, products]);
 
   return (
     <div className={styles.modalOverlay}>
@@ -34,23 +88,89 @@ export default function SearchModal({ isOpen, onClose }) {
               type="text" 
               placeholder="Search for sneakers, brands, or collections..." 
               className={styles.searchInput}
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
             />
+            {query && (
+              <button 
+                onClick={() => setQuery('')} 
+                style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#999', padding: '4px' }}
+                aria-label="Clear search"
+              >
+                <X size={18} />
+              </button>
+            )}
           </div>
           <button className={styles.closeBtn} onClick={onClose} aria-label="Close search">
             <X size={28} />
           </button>
         </div>
 
-        <div className={styles.suggestions}>
-          <h3><TrendingUp size={18} /> Popular Searches</h3>
-          <div className={styles.tags}>
-            {popularSearches.map((term) => (
-              <button key={term} className={styles.tagBtn}>
-                {term}
-              </button>
-            ))}
+        {/* Loading state */}
+        {loading && (
+          <div className={styles.loadingState}>
+            <div className={styles.spinner} />
+            <p>Searching for sneakers...</p>
           </div>
-        </div>
+        )}
+
+        {/* Results list */}
+        {!loading && query && (
+          <div className={styles.resultsContainer}>
+            {filteredProducts.length > 0 ? (
+              filteredProducts.map((product) => (
+                <Link 
+                  key={product._id} 
+                  href={`/try/${product._id}`} 
+                  className={styles.resultItem}
+                  onClick={onClose}
+                >
+                  <img 
+                    src={
+                      product.image 
+                        ? urlFor(product.image).url() 
+                        : (product.images && product.images.length > 0 
+                            ? urlFor(product.images[0]).url() 
+                            : '/placeholder1.jpg')
+                    } 
+                    alt={product.name} 
+                    className={styles.resultImage}
+                  />
+                  <div className={styles.resultInfo}>
+                    <span className={styles.resultBrand}>{product.brand}</span>
+                    <span className={styles.resultName}>{product.name}</span>
+                    {product.productCode && (
+                      <span className={styles.resultSku}>SKU: {product.productCode}</span>
+                    )}
+                  </div>
+                  <span className={styles.resultPrice}>₹{product.price.toLocaleString()}</span>
+                </Link>
+              ))
+            ) : (
+              <div className={styles.emptyState}>
+                <p>No products found matching "{query}"</p>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Popular searches suggestions */}
+        {!query && !loading && (
+          <div className={styles.suggestions}>
+            <h3><TrendingUp size={18} /> Popular Searches</h3>
+            <div className={styles.tags}>
+              {popularSearches.map((term) => (
+                <button 
+                  key={term} 
+                  className={styles.tagBtn}
+                  onClick={() => setQuery(term)}
+                >
+                  {term}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
       <div className={styles.backdrop} onClick={onClose} />
     </div>
