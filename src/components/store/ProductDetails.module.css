@@ -392,30 +392,350 @@
 /* MOBILE RESPONSIVE */
 @media (max-width: 1024px) {
   .detailsContainer {
-    flex-direction: column-reverse; /* Usually info below image on mobile */
+    flex-direction: column;
     gap: 2rem;
+    padding: 0 1rem;
+    margin: 2rem auto;
   }
-  
+
   .leftColumn {
     width: 100%;
     position: relative;
     top: 0;
+    padding: 1.5rem;
+    gap: 1.25rem;
+    border-radius: 16px;
   }
-  
+
   .rightColumn {
     width: 100%;
     gap: 2rem;
+    order: -1; /* Image on top on mobile */
   }
 
   .imagePreview {
     padding: 2rem;
+    border-radius: 16px;
   }
-  
+
   .specsGrid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
   }
 
   .featuresGrid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .productName {
+    font-size: 1.6rem;
+  }
+
+  .price {
+    font-size: 1.5rem;
   }
 }
+
+@media (max-width: 768px) {
+  .detailsContainer {
+    padding: 0 0.75rem;
+    margin: 1.25rem auto 7rem; /* bottom margin for sticky bar */
+  }
+
+  .leftColumn {
+    padding: 1.25rem;
+    gap: 1rem;
+    border-radius: 12px;
+  }
+
+  .productName {
+    font-size: 1.4rem;
+    letter-spacing: -0.01em;
+  }
+
+  .price {
+    font-size: 1.6rem;
+    font-weight: 800;
+  }
+
+  .priceRatingRow {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .description {
+    font-size: 0.9rem;
+  }
+
+  .sectionTitle {
+    font-size: 0.95rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .sizesGrid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.5rem;
+  }
+
+  .sizeBtn {
+    padding: 0.65rem 0;
+    font-size: 0.85rem;
+    border-radius: 8px;
+  }
+
+  .imagePreview {
+    padding: 1.5rem;
+    border-radius: 12px;
+  }
+
+  .gallery {
+    gap: 0.6rem;
+  }
+
+  .thumbnail {
+    width: 70px;
+    height: 70px;
+    border-radius: 8px;
+  }
+
+  .specsSection, .featuresSection {
+    padding: 1.5rem;
+    border-radius: 12px;
+  }
+
+  .specsGrid {
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .featuresGrid {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.6rem;
+    margin-top: 1rem;
+  }
+
+  .featureCard {
+    padding: 0.85rem;
+    font-size: 0.8rem;
+    gap: 0.5rem;
+    border-radius: 8px;
+  }
+
+  /* Hide action buttons in left column on mobile — replaced by sticky bar */
+  .actionButtons {
+    display: none;
+  }
+
+  .infoList {
+    padding-top: 1rem;
+    margin-top: 0.5rem;
+  }
+
+  .infoItem {
+    font-size: 0.8rem;
+  }
+}
+
+/* ---- BADGE ROW ---- */
+.badgeRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.brandBadge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #1A1A1A;
+  background: #E5E5E5;
+  padding: 0.25rem 0.65rem;
+  border-radius: 99px;
+}
+
+.stockBadge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #16a34a;
+  background: #dcfce7;
+  padding: 0.25rem 0.65rem;
+  border-radius: 99px;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.codBadge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #0369a1;
+  background: #e0f2fe;
+  padding: 0.25rem 0.65rem;
+  border-radius: 99px;
+}
+
+/* ---- SAVINGS TAG ---- */
+.priceBlock {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.mrpPrice {
+  font-size: 1rem;
+  color: #9ca3af;
+  text-decoration: line-through;
+  font-weight: 400;
+}
+
+.savingsTag {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #dc2626;
+}
+
+/* ---- TEXT-PILL COLOR BUTTONS ---- */
+.colorPillsFlex {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.colorPill {
+  padding: 0.45rem 0.9rem;
+  border: 1.5px solid rgba(0,0,0,0.15);
+  border-radius: 99px;
+  background: white;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #1A1A1A;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.colorPill:hover {
+  border-color: #1A1A1A;
+}
+
+.activeColorPill {
+  background: #1A1A1A;
+  color: white;
+  border-color: #1A1A1A;
+}
+
+/* ---- STICKY MOBILE BOTTOM BAR ---- */
+.stickyBottomBar {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .stickyBottomBar {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 500;
+    background: white;
+    border-top: 1px solid rgba(0,0,0,0.08);
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+    padding: 0.6rem 0.75rem;
+    gap: 0.5rem;
+  }
+
+  .stickyTopRow {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .stickyQtySelector {
+    display: flex;
+    align-items: center;
+    border: 1.5px solid rgba(0,0,0,0.15);
+    border-radius: 99px;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .stickyQtyBtn {
+    padding: 0.55rem 0.75rem;
+    background: #F0F0F0;
+    font-weight: 700;
+    font-size: 1rem;
+    color: #1A1A1A;
+    border: none;
+    cursor: pointer;
+    line-height: 1;
+  }
+
+  .stickyQtyValue {
+    padding: 0 0.75rem;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #1A1A1A;
+  }
+
+  .stickyAddToCartBtn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    padding: 0.75rem 1rem;
+    background: #1A1A1A;
+    color: white;
+    border-radius: 99px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .stickyAddToCartBtn:hover {
+    background: #333;
+  }
+
+  .stickyWishlistBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border: 1.5px solid rgba(0,0,0,0.15);
+    border-radius: 50%;
+    background: white;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: border-color 0.2s;
+  }
+
+  .stickyWishlistBtn:hover {
+    border-color: #1A1A1A;
+  }
+
+  .stickyBuyNowBtn {
+    width: 100%;
+    padding: 0.85rem;
+    background: #1A1A1A;
+    color: white;
+    border-radius: 99px;
+    font-weight: 700;
+    font-size: 1rem;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s;
+    letter-spacing: 0.02em;
+  }
+
+  .stickyBuyNowBtn:hover {
+    background: #333;
+  }
+}
+

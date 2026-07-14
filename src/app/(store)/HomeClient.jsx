@@ -82,6 +82,8 @@ export default function HomeClient({ initialProducts = [] }) {
   const [priceRange, setPriceRange] = useState("All Prices");
   const [sortBy, setSortBy] = useState("Sort: Featured");
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [showAll, setShowAll] = useState(false);
+  const INITIAL_VISIBLE = 5;
 
   // Parallax State
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
@@ -169,6 +171,11 @@ export default function HomeClient({ initialProducts = [] }) {
     }
 
     return result;
+  }, [activeBrand, selectedSize, priceRange, sortBy]);
+
+  // Reset "show all" when filters change
+  useEffect(() => {
+    setShowAll(false);
   }, [activeBrand, selectedSize, priceRange, sortBy]);
 
   const containerVariants = {
@@ -526,7 +533,7 @@ export default function HomeClient({ initialProducts = [] }) {
           </div>
 
           <div className={styles.resultsCount}>
-            Showing {filteredProducts.length} Results
+            Showing {showAll ? filteredProducts.length : Math.min(INITIAL_VISIBLE, filteredProducts.length)} of {filteredProducts.length} Results
           </div>
 
           <div className={styles.filterDropdown}>
@@ -548,7 +555,7 @@ export default function HomeClient({ initialProducts = [] }) {
         {/* Product Grid */}
         <div className={styles.productGrid}>
           <AnimatePresence mode="popLayout">
-            {filteredProducts.map(product => (
+            {(showAll ? filteredProducts : filteredProducts.slice(0, INITIAL_VISIBLE)).map(product => (
               <motion.div
                 key={product._id}
                 layout
@@ -568,6 +575,23 @@ export default function HomeClient({ initialProducts = [] }) {
             </div>
           )}
         </div>
+
+        {/* View All / Show Less Button */}
+        {filteredProducts.length > INITIAL_VISIBLE && (
+          <motion.div
+            className={styles.viewAllWrapper}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+          >
+            <button
+              className={styles.viewAllBtn}
+              onClick={() => setShowAll(prev => !prev)}
+            >
+              {showAll ? 'Show Less ↑' : `View All ${filteredProducts.length} Products →`}
+            </button>
+          </motion.div>
+        )}
 
         {/* Product Details Panel */}
         <AnimatePresence mode="wait">

@@ -14,14 +14,17 @@ const client = createClient({
   projectId: envVars.NEXT_PUBLIC_SANITY_PROJECT_ID,
   dataset: envVars.NEXT_PUBLIC_SANITY_DATASET,
   apiVersion: envVars.NEXT_PUBLIC_SANITY_API_VERSION || '2024-01-01',
-  token: envVars.SANITY_API_TOKEN,
+  // token: envVars.SANITY_API_TOKEN,
   useCdn: false,
 });
 
 async function testFetch() {
-  const email = "test@example.com"; // we will just fetch all customers to see
-  const customers = await client.fetch(`*[_type == "customer"]{ _id, email, password }`);
-  console.log("Customers:", customers);
+  try {
+    const products = await client.fetch(`*[_type == "product"]{ _id, name }`);
+    console.log("SUCCESS: Public read allowed. Products:", products.length);
+  } catch (err) {
+    console.error("FAILURE: Private read required. Error:", err.message);
+  }
 }
 
 testFetch();

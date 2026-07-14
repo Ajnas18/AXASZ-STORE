@@ -218,11 +218,26 @@
 }
 
 @media (max-width: 480px) {
-  .actions {
-    gap: 0.75rem;
+  .header {
+    height: 56px;
   }
-  
+
+  .container {
+    padding: 0 0.75rem;
+  }
+
+  .actions {
+    gap: 0.5rem;
+  }
+
   .transparent .actions {
-    padding: 0.5rem 1rem;
+    padding: 0.4rem 0.75rem;
+    gap: 0.5rem;
+  }
+
+  .iconBtn svg,
+  .mobileMenuBtn svg {
+    width: 18px;
+    height: 18px;
   }
 }

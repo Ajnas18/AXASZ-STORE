@@ -42,7 +42,7 @@ export default function ProductCard({ product, onClick }) {
           onClick={handleToggleWishlist}
           style={{ color: isWishlisted ? 'red' : 'inherit' }}
         >
-          <Heart size={18} fill={isWishlisted ? 'red' : 'none'} />
+          <Heart size={16} fill={isWishlisted ? 'red' : 'none'} />
         </button>
         <motion.img 
           src={
@@ -67,10 +67,10 @@ export default function ProductCard({ product, onClick }) {
           initial={{ y: 20, opacity: 0 }}
         >
           <button className={styles.actionBtn}>
-            <Eye size={16} /> Quick View
+            <Eye size={14} /> Quick View
           </button>
           <button className={`${styles.actionBtn} ${styles.primaryBtn}`} onClick={handleAddToCart}>
-            <ShoppingBag size={16} /> Add to Cart
+            <ShoppingBag size={14} /> Add to Cart
           </button>
         </motion.div>
       </div>
