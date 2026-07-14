@@ -3,8 +3,13 @@ import { NextResponse } from 'next/server';
 export function middleware(request) {
   const { pathname } = request.nextUrl;
 
-  // Protect /admin routes
-  if (pathname.startsWith('/admin')) {
+  // Skip the login page itself to avoid infinite redirect loop
+  if (pathname.startsWith('/admin-login')) {
+    return NextResponse.next();
+  }
+
+  // Protect all /admin routes (including bare /admin)
+  if (pathname === '/admin' || pathname.startsWith('/admin/')) {
     const session = request.cookies.get('admin_session');
 
     if (!session || session.value !== 'authenticated') {
@@ -18,5 +23,6 @@ export function middleware(request) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*'],
+  // Match /admin, /admin/*, and /admin-login (to skip it explicitly)
+  matcher: ['/admin', '/admin/(.*)', '/admin-login'],
 };
