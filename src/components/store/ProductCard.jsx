@@ -1,20 +1,28 @@
 "use client";
 
+import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { Heart, Star, ShoppingBag, Eye } from 'lucide-react';
+import { Heart, Star, ShoppingBag, Eye, Zap } from 'lucide-react';
 import { urlFor } from '@/sanity/client';
 import styles from './ProductCard.module.css';
 
 import { useStore } from '@/store/useStore';
 
 export default function ProductCard({ product, onClick }) {
+  const router = useRouter();
   const { addToCart, toggleWishlist, wishlist } = useStore();
   
   const isWishlisted = wishlist.some((item) => item._id === product._id || item.id === product._id);
 
   const handleAddToCart = (e) => {
     e.stopPropagation();
-    addToCart(product, product.sizes?.[0] || 9); // default to first size
+    addToCart(product, product.sizes?.[0] || 9);
+  };
+
+  const handleBuyNow = (e) => {
+    e.stopPropagation();
+    addToCart(product, product.sizes?.[0] || 9);
+    router.push('/checkout');
   };
 
   const handleToggleWishlist = (e) => {
@@ -96,6 +104,12 @@ export default function ProductCard({ product, onClick }) {
             <span className={styles.originalPrice}>₹{product.originalPrice}</span>
           )}
         </div>
+
+        {/* Buy Now button */}
+        <button className={styles.buyNowBtn} onClick={handleBuyNow}>
+          <Zap size={14} />
+          Buy Now
+        </button>
 
         <div className={styles.metaInfo}>
           <div className={styles.sizes}>

@@ -17,7 +17,9 @@
   right: 0;
   width: 100%;
   max-width: 400px;
-  height: 100vh;
+  /* dvh = dynamic viewport height, accounts for mobile browser chrome */
+  height: 100dvh;
+  height: 100vh; /* fallback for old browsers */
   background: white;
   z-index: 1002;
   box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1);
@@ -25,6 +27,8 @@
   flex-direction: column;
   transform: translateX(100%);
   animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  /* Ensure drawer never overflows off screen */
+  overflow: hidden;
 }
 
 .header {
@@ -110,9 +114,13 @@
 }
 
 .footer {
-  padding: 2rem;
-  border-top: 1px solid var(--color-secondary);
-  background: #FAFAFA;
+  padding: 1.25rem 1.5rem;
+  border-top: 2px solid var(--color-secondary);
+  background: #fff;
+  /* Always visible — never goes behind browser bar */
+  flex-shrink: 0;
+  padding-bottom: max(1.25rem, env(safe-area-inset-bottom));
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.06);
 }
 
 .subtotal {
@@ -122,7 +130,7 @@
   font-weight: 700;
   font-size: 1.1rem;
   color: var(--color-primary);
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .checkoutBtn {
@@ -130,16 +138,46 @@
   background-color: var(--color-primary);
   color: white;
   border: none;
-  padding: 1rem;
-  border-radius: 8px;
-  font-weight: 700;
-  font-size: 1rem;
+  padding: 1.1rem;
+  border-radius: 12px;
+  font-weight: 800;
+  font-size: 1.05rem;
   cursor: pointer;
-  transition: opacity 0.2s ease;
+  letter-spacing: 0.02em;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 54px;
 }
 
 .checkoutBtn:hover {
-  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+}
+
+.checkoutBtn:active {
+  transform: scale(0.98);
+}
+
+@media (max-width: 600px) {
+  .footer {
+    padding: 1rem 1rem;
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+  .checkoutBtn {
+    font-size: 1.1rem;
+    min-height: 58px;
+    border-radius: 14px;
+  }
+  .header {
+    padding: 1rem 1.25rem;
+  }
+  .content {
+    padding: 1rem 1.25rem;
+  }
 }
 
 .itemList {
