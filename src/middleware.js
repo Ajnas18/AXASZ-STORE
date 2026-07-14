@@ -3,26 +3,36 @@ import { NextResponse } from 'next/server';
 export function middleware(request) {
   const { pathname } = request.nextUrl;
 
-  // Skip the login page itself to avoid infinite redirect loop
-  if (pathname.startsWith('/admin-login')) {
-    return NextResponse.next();
-  }
-
-  // Protect all /admin routes (including bare /admin)
+  // Only protect /admin routes
   if (pathname === '/admin' || pathname.startsWith('/admin/')) {
-    const session = request.cookies.get('admin_session');
+    const authHeader = request.headers.get('authorization');
 
-    if (!session || session.value !== 'authenticated') {
-      const loginUrl = new URL('/admin-login', request.url);
-      loginUrl.searchParams.set('from', pathname);
-      return NextResponse.redirect(loginUrl);
+    if (authHeader) {
+      // Parse "Basic <base64(username:password)>"
+      const base64 = authHeader.split(' ')[1];
+      const decoded = atob(base64);
+      const [username, password] = decoded.split(':');
+
+      const validUser = username === process.env.ADMIN_USERNAME;
+      const validPass = password === process.env.ADMIN_PASSWORD;
+
+      if (validUser && validPass) {
+        return NextResponse.next(); // ✅ Access granted
+      }
     }
+
+    // ❌ No valid credentials — show browser login dialog
+    return new NextResponse('Access Denied', {
+      status: 401,
+      headers: {
+        'WWW-Authenticate': 'Basic realm="AXASZ Admin", charset="UTF-8"',
+      },
+    });
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  // Match /admin, /admin/*, and /admin-login (to skip it explicitly)
-  matcher: ['/admin', '/admin/(.*)', '/admin-login'],
+  matcher: ['/admin', '/admin/(.*)'],
 };
