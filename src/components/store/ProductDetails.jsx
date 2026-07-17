@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Star, Plus, Minus, Heart, ShoppingBag, Truck, ArrowLeftRight, CheckCircle2, Camera } from 'lucide-react';
 import styles from './ProductDetails.module.css';
@@ -77,6 +78,7 @@ const getProductGallery = (product) => {
 };
 
 export default function ProductDetails({ product }) {
+  const router = useRouter();
   const initialGallery = getProductGallery(product);
   const [selectedSize, setSelectedSize] = useState(product?.sizes?.[0]);
   const [selectedColor, setSelectedColor] = useState(product?.colors?.[0]);
@@ -85,6 +87,12 @@ export default function ProductDetails({ product }) {
   
   const { addToCart, toggleWishlist, wishlist } = useStore();
   const isWishlisted = wishlist.some((item) => item._id === product?._id || item.id === product?.id);
+
+  const handleBuyNow = () => {
+    const sizeToBuy = selectedSize || product?.sizes?.[0] || 9;
+    addToCart(product, sizeToBuy, quantity);
+    router.push('/checkout');
+  };
 
   // Reset state when product changes
   useEffect(() => {
@@ -199,7 +207,7 @@ export default function ProductDetails({ product }) {
             <button className={styles.addToCartBtn} onClick={() => addToCart(product, selectedSize, quantity)}>
               <ShoppingBag size={20} /> Add to Cart
             </button>
-            <button className={styles.buyNowBtn} onClick={() => addToCart(product, selectedSize, quantity)}>
+            <button className={styles.buyNowBtn} onClick={handleBuyNow}>
               Buy Now
             </button>
             <Link href={`/try/${product._id}`} style={{ width: '100%', textDecoration: 'none' }}>
@@ -338,7 +346,7 @@ export default function ProductDetails({ product }) {
         {/* Buy Now */}
         <button
           className={styles.stickyBuyNowBtn}
-          onClick={() => addToCart(product, selectedSize, quantity)}
+          onClick={handleBuyNow}
         >
           Buy Now
         </button>

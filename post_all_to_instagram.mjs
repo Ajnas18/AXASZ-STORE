@@ -81,16 +81,15 @@ async function main() {
       const imageUrl = `${appUrl}/api/instagram-image/${product._id}/sneaker.jpg`;
       const tryUrl = `${appUrl}/try/${product._id}`;
       
-      const formattedPrice = product.price ? `₹${Number(product.price).toLocaleString('en-IN')}` : 'N/A';
       const cleanBrandTag = product.brand ? product.brand.toLowerCase().replace(/[^a-z0-9]/g, '') : 'sneakers';
       
       const caption = `🔥 NEW DROP: ${product.name}\n` +
         `━━━━━━━━━━━━━━━━━━━━\n` +
         `Brand: ${product.brand || 'AXASZ'}\n` +
-        `Price: ${formattedPrice}\n` +
         `SKU: ${product.productCode || 'N/A'}\n` +
         `━━━━━━━━━━━━━━━━━━━━\n` +
-        `Virtual Try-on & Shop 👟 → ${tryUrl}\n\n` +
+        `Check our website for price & details! 👟\n` +
+        `Virtual Try-on & Shop → ${tryUrl}\n\n` +
         `#sneakers #axaszstore #sneakerhead #kicks #${cleanBrandTag} #freshkicks`;
         
       const payload = {

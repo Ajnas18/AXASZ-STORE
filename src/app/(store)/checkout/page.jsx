@@ -51,6 +51,12 @@ export default function CheckoutPage() {
     setIsMounted(true);
   }, []);
 
+  useEffect(() => {
+    if (isMounted) {
+      window.scrollTo(0, 0);
+    }
+  }, [isMounted]);
+
   const subtotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
   const discount = 0;
   const totalAmount = subtotal - discount;

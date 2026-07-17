@@ -26,16 +26,15 @@ export async function POST(request) {
     // 4. Construct beautiful Instagram caption
     const tryUrl = `${appUrl}/try/${_id}`;
     
-    const formattedPrice = price ? `₹${Number(price).toLocaleString('en-IN')}` : 'N/A';
     const cleanBrandTag = brand ? brand.toLowerCase().replace(/[^a-z0-9]/g, '') : 'sneakers';
 
     const caption = `🔥 NEW DROP: ${name}\n` +
       `━━━━━━━━━━━━━━━━━━━━\n` +
       `Brand: ${brand || 'AXASZ'}\n` +
-      `Price: ${formattedPrice}\n` +
       `SKU: ${productCode || 'N/A'}\n` +
       `━━━━━━━━━━━━━━━━━━━━\n` +
-      `Virtual Try-on & Shop 👟 → ${tryUrl}\n\n` +
+      `Check our website for price & details! 👟\n` +
+      `Virtual Try-on & Shop → ${tryUrl}\n\n` +
       `#sneakers #axaszstore #sneakerhead #kicks #${cleanBrandTag} #freshkicks`;
 
     // 5. Send to Zapier
