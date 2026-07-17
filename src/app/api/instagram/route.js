@@ -1,14 +1,38 @@
 import { NextResponse } from 'next/server';
 import { urlFor } from '@/sanity/client';
 
+export async function OPTIONS(request) {
+  const origin = request.headers.get('origin') || '*';
+  return new Response(null, {
+    status: 204,
+    headers: {
+      'Access-Control-Allow-Origin': origin,
+      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, x-revalidate-secret',
+      'Access-Control-Max-Age': '86400',
+    },
+  });
+}
+
 export async function POST(request) {
+  const origin = request.headers.get('origin') || '*';
+  
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': origin,
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, x-revalidate-secret',
+  };
+
   try {
     // 1. Verify webhook secret
     const { searchParams } = new URL(request.url);
     const secret = searchParams.get('secret') || request.headers.get('x-revalidate-secret');
 
     if (!secret || secret !== process.env.SANITY_REVALIDATE_SECRET) {
-      return NextResponse.json({ error: 'Unauthorized: Invalid or missing token' }, { status: 401 });
+      return NextResponse.json(
+        { error: 'Unauthorized: Invalid or missing token' }, 
+        { status: 401, headers: corsHeaders }
+      );
     }
 
     // 2. Parse request body
@@ -16,7 +40,10 @@ export async function POST(request) {
     const { _id, name, brand, price, productCode, image } = body;
 
     if (!_id || !name) {
-      return NextResponse.json({ error: 'Bad Request: Missing product ID or name' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Bad Request: Missing product ID or name' }, 
+        { status: 400, headers: corsHeaders }
+      );
     }
 
     // 3. Resolve image URL to our local JPEG proxy endpoint
@@ -55,7 +82,7 @@ export async function POST(request) {
           tryUrl,
           caption
         }
-      });
+      }, { headers: corsHeaders });
     }
 
     const response = await fetch(zapierUrl, {
@@ -80,16 +107,19 @@ export async function POST(request) {
       return NextResponse.json({
         success: false,
         error: `Zapier webhook rejected request: ${response.status} - ${errorText}`
-      }, { status: 502 });
+      }, { status: 502, headers: corsHeaders });
     }
 
     return NextResponse.json({
       success: true,
       message: 'Product formatted and forwarded to Zapier successfully!'
-    });
+    }, { headers: corsHeaders });
 
   } catch (error) {
     console.error('Error in Instagram webhook route:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json(
+      { error: error.message }, 
+      { status: 500, headers: corsHeaders }
+    );
   }
 }
