@@ -131,7 +131,7 @@ export default function ProductDetails({ product }) {
             <span className={styles.stockBadge}>
               <CheckCircle2 size={11} /> In Stock
             </span>
-            <span className={styles.codBadge}>COD Available</span>
+            <span className={styles.codBadge}>COD not available</span>
           </div>
 
           <h1 className={styles.productName}>{product.name}</h1>

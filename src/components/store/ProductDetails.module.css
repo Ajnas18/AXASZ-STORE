@@ -570,10 +570,11 @@
 .codBadge {
   font-size: 0.7rem;
   font-weight: 700;
-  color: #0369a1;
-  background: #e0f2fe;
+  color: #dc2626;
+  background: #fef2f2;
   padding: 0.25rem 0.65rem;
   border-radius: 99px;
+  border: 1px solid #fee2e2;
 }
 
 /* ---- SAVINGS TAG ---- */
