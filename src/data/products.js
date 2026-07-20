@@ -3,8 +3,8 @@ export const PRODUCTS = [
   { id: 1, productCode: "AXS0011", brand: "Nike", name: "Nike Air Force 1", price: 10000, originalPrice: 10800, rating: 4.8, reviews: 342, badge: "Best Seller", sizes: [6, 7, 8, 9, 10, 11], colors: ["White"], image: "/sneaker.png" },
   { id: 2, productCode: "AXS0012", brand: "Nike", name: "Nike Air Max 270", price: 13300, originalPrice: 13300, rating: 4.7, reviews: 215, badge: null, sizes: [7, 8, 9, 10, 11], colors: ["Black", "White/Red"], image: "/sneaker.png" },
   { id: 3, productCode: "AXS0013", brand: "Nike", name: "Nike Dunk Low", price: 9500, originalPrice: 9500, rating: 4.9, reviews: 1024, badge: "Hot", sizes: [7, 8, 9, 10], colors: ["Panda"], image: "/sneaker.png" },
-  { id: 4, productCode: "AXS0014", brand: "Nike", name: "Air Jordan 1 High", price: 15000, originalPrice: 15000, rating: 4.9, reviews: 3450, badge: "Premium", sizes: [7, 8, 9, 10, 11], colors: ["Chicago", "Bred", "Royal"], image: "/sneaker.png" },
-  { id: 5, productCode: "AXS0015", brand: "Nike", name: "Air Jordan 1 Low", price: 9500, originalPrice: 9500, rating: 4.8, reviews: 1245, badge: "Best Seller", sizes: [6, 7, 8, 9, 10, 11], colors: ["Shadow", "Bred Toe"], image: "/sneaker.png" },
+  { id: 4, productCode: "AXS0014", brand: "Jordan", name: "Air Jordan 1 High", price: 15000, originalPrice: 15000, rating: 4.9, reviews: 3450, badge: "Premium", sizes: [7, 8, 9, 10, 11], colors: ["Chicago", "Bred", "Royal"], image: "/sneaker.png" },
+  { id: 5, productCode: "AXS0015", brand: "Jordan", name: "Air Jordan 1 Low", price: 9500, originalPrice: 9500, rating: 4.8, reviews: 1245, badge: "Best Seller", sizes: [6, 7, 8, 9, 10, 11], colors: ["Shadow", "Bred Toe"], image: "/sneaker.png" },
   { id: 6, productCode: "AXS0016", brand: "Nike", name: "Nike Pegasus 41", price: 11600, originalPrice: 11600, rating: 4.8, reviews: 512, badge: "New Arrival", sizes: [7, 8, 9, 10, 11], colors: ["White/Volt", "Black"], image: "/sneaker.png" },
 
   // PUMA

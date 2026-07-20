@@ -17,7 +17,7 @@ const elegantFont = Playfair_Display({
   display: 'swap',
 });
 
-const BRANDS = ["All Brands", "Nike", "Adidas", "Puma", "New Balance", "Converse", "Vans"];
+const BRANDS = ["All Brands", "Nike", "Adidas", "Puma", "New Balance", "Converse", "Vans", "Jordan"];
 const SIZES = [6, 7, 8, 9, 10, 11];
 
 const InstagramIcon = ({ size = 24, color = "currentColor" }) => (

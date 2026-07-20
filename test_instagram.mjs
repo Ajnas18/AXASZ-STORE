@@ -12,8 +12,7 @@ const envVars = envFile.split('\n').reduce((acc, line) => {
 }, {});
 
 const secret = envVars.SANITY_REVALIDATE_SECRET;
-const port = 3000;
-const targetUrl = `http://localhost:${port}/api/instagram?secret=${secret}`;
+const targetUrl = `https://axasz-store.vercel.app/api/instagram?secret=${secret}`;
 
 // 2. Setup Sanity Client
 const client = createClient({
@@ -24,14 +23,14 @@ const client = createClient({
 });
 
 async function runTest() {
-  console.log("Starting Webhook Mock Test...");
-  console.log(`Target URL: http://localhost:${port}/api/instagram?secret=***`);
+  console.log("Starting Webhook Test for Adidas Samba...");
+  console.log(`Target URL: https://axasz-store.vercel.app/api/instagram?secret=***`);
 
   let testPayload = null;
 
   try {
-    // Attempt to fetch a real product from Sanity
-    const query = `*[_type == "product"][0]{ _id, name, brand, price, productCode, image }`;
+    // Fetch the specific Adidas Samba LT product from Sanity
+    const query = `*[_type == "product" && _id == "ad7c29e3-597b-40fb-84fe-9a4376734a01"][0]{ _id, name, brand, price, productCode, image }`;
     const product = await client.fetch(query);
     
     if (product) {

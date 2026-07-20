@@ -40,6 +40,7 @@ export default function Footer() {
             <span className={styles.link}>New Balance</span>
             <span className={styles.link}>Converse</span>
             <span className={styles.link}>Vans</span>
+            <span className={styles.link}>Jordan</span>
           </div>
         </div>
 

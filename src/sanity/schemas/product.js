@@ -28,6 +28,7 @@ export const productSchema = {
           { title: 'New Balance', value: 'New Balance' },
           { title: 'Converse', value: 'Converse' },
           { title: 'Vans', value: 'Vans' },
+          { title: 'Jordan', value: 'Jordan' },
         ],
       },
       validation: (Rule) => Rule.required(),
