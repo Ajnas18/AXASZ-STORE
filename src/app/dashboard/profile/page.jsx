@@ -72,7 +72,7 @@ export default function ProfileDetails() {
           <div className="pt-1">
             <p className="text-[14px] font-medium text-gray-400 uppercase tracking-wider mb-1">Phone Number</p>
             <p className="text-[20px] font-bold text-gray-900">
-              {user.phone ? user.phone : <span className="text-gray-400 italic font-medium text-[16px]">Not provided</span>}
+              {user.phone ? user.phone : <span className="text-gray-400 font-medium text-[16px]">Not provided</span>}
             </p>
           </div>
         </div>

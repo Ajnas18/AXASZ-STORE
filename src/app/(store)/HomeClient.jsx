@@ -12,7 +12,6 @@ import styles from './page.module.css';
 
 const elegantFont = Playfair_Display({
   weight: '500',
-  style: 'italic',
   subsets: ['latin'],
   display: 'swap',
 });
@@ -83,7 +82,7 @@ export default function HomeClient({ initialProducts = [] }) {
   const [sortBy, setSortBy] = useState("Sort: Featured");
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [showAll, setShowAll] = useState(false);
-  const INITIAL_VISIBLE = 5;
+  const INITIAL_VISIBLE = 8;
 
   // Parallax State
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
