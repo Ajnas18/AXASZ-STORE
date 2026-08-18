@@ -10,6 +10,16 @@ export const productSchema = {
       validation: (Rule) => Rule.required(),
     },
     {
+      name: 'slug',
+      title: 'Slug (URL)',
+      type: 'slug',
+      description: 'Click Generate to automatically create a clean URL slug from the name.',
+      options: {
+        source: 'name',
+        maxLength: 96,
+      },
+    },
+    {
       name: 'productCode',
       title: 'Product Code (SKU)',
       type: 'string',
@@ -44,6 +54,13 @@ export const productSchema = {
       title: 'Original Price',
       type: 'number',
       validation: (Rule) => Rule.min(0),
+    },
+    {
+      name: 'dealer',
+      title: 'Dealer / Supplier',
+      type: 'reference',
+      to: [{ type: 'dealer' }],
+      description: 'Select the dealer responsible for fulfilling this product',
     },
     {
       name: 'badge',

@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { Search, X, TrendingUp } from 'lucide-react';
 import Link from 'next/link';
 import { urlFor } from '@/sanity/client';
+import { getProductSlug } from '@/lib/productUrl';
 import styles from './SearchModal.module.css';
 
 export default function SearchModal({ isOpen, onClose }) {
@@ -127,7 +128,7 @@ export default function SearchModal({ isOpen, onClose }) {
               filteredProducts.map((product) => (
                 <Link 
                   key={product._id} 
-                  href={`/try/${product._id}`} 
+                  href={`/product/${getProductSlug(product)}`} 
                   className={styles.resultItem}
                   onClick={onClose}
                 >

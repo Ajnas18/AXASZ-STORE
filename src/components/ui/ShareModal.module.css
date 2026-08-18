@@ -1,0 +1,285 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(8px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.modal {
+  position: relative;
+  background: #121212;
+  color: #FFFFFF;
+  border-radius: 24px;
+  width: 100%;
+  max-width: 480px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  z-index: 10000;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.headerTitle {
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #FFFFFF;
+  margin: 0;
+}
+
+.closeBtn {
+  background: rgba(255, 255, 255, 0.08);
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #AAAAAA;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.closeBtn:hover {
+  background: rgba(255, 255, 255, 0.18);
+  color: #FFFFFF;
+  transform: scale(1.05);
+}
+
+/* Product Preview snippet in modal */
+.productSnippet {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.productImg {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  background: #1C1C1C;
+  border-radius: 12px;
+  padding: 0.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.productMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  overflow: hidden;
+}
+
+.productBrand {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #888888;
+}
+
+.productName {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #FFFFFF;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.productPrice {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #FFFFFF;
+}
+
+/* Share Platforms Grid */
+.platformsSection {
+  padding: 1.25rem 1.5rem;
+}
+
+.sectionLabel {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #777777;
+  margin-bottom: 0.85rem;
+}
+
+.platformsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+}
+
+.platformBtn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.85rem 0.5rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  color: #E0E0E0;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  text-decoration: none;
+}
+
+.platformBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-3px);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #FFFFFF;
+}
+
+.platformIconWrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+.platformBtn:hover .platformIconWrap {
+  transform: scale(1.1);
+}
+
+.whatsappIcon {
+  background: #25D366;
+  color: #FFFFFF;
+}
+
+.twitterIcon {
+  background: #000000;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #FFFFFF;
+}
+
+.facebookIcon {
+  background: #1877F2;
+  color: #FFFFFF;
+}
+
+.instagramIcon {
+  background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
+  color: #FFFFFF;
+}
+
+.nativeShareIcon {
+  background: #333333;
+  color: #FFFFFF;
+}
+
+.platformName {
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+/* Copy Link Section */
+.copySection {
+  padding: 0 1.5rem 1.5rem 1.5rem;
+}
+
+.linkBox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #1A1A1A;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 0.4rem 0.4rem 0.4rem 0.85rem;
+}
+
+.linkInput {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #CCCCCC;
+  font-size: 0.82rem;
+  font-family: inherit;
+  outline: none;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.copyBtn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.6rem 1.1rem;
+  background: #FFFFFF;
+  color: #000000;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.copyBtn:hover {
+  background: #EAEAEA;
+  transform: scale(1.02);
+}
+
+.copyBtn.copied {
+  background: #22c55e;
+  color: #FFFFFF;
+}
+
+/* Mobile Bottom Sheet style */
+@media (max-width: 600px) {
+  .backdrop {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .modal {
+    max-width: 100%;
+    border-radius: 24px 24px 0 0;
+    padding-bottom: env(safe-area-inset-bottom, 1.5rem);
+  }
+
+  .platformsGrid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.5rem;
+  }
+
+  .platformBtn {
+    padding: 0.75rem 0.25rem;
+  }
+
+  .platformIconWrap {
+    width: 40px;
+    height: 40px;
+  }
+
+  .platformName {
+    font-size: 0.7rem;
+  }
+}

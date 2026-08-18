@@ -3,6 +3,7 @@ import { client } from '@/sanity/client';
 import { getSession } from '@/lib/auth';
 import { v4 as uuidv4 } from 'uuid';
 import { rateLimit, getClientIp } from '@/lib/rateLimit';
+import { computeOrderRouting } from '@/lib/orderRouting';
 
 // Input sanitization helper to strip HTML tags
 function sanitizeString(str) {
@@ -72,25 +73,43 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Some items in the cart are missing IDs' }, { status: 400 });
     }
 
-    // Fetch live product data from Sanity
+    // Fetch live product data including assigned dealers from Sanity
     const dbProducts = await client.fetch(
-      `*[_type == "product" && _id in $productIds]{ _id, price, name }`,
+      `*[_type == "product" && _id in $productIds]{
+        _id,
+        price,
+        name,
+        productCode,
+        dealer->{
+          _id,
+          name,
+          businessName,
+          whatsapp,
+          phone,
+          status
+        }
+      }`,
       { productIds }
     );
 
-    const priceMap = {};
+    const productMap = {};
+    const dealersMap = {};
+
     dbProducts.forEach(product => {
-      priceMap[product._id] = product.price;
+      productMap[product._id] = product;
+      if (product.dealer && product.dealer._id) {
+        dealersMap[product.dealer._id] = product.dealer;
+      }
     });
 
     let computedSubtotal = 0;
     for (const item of cart) {
       const id = item._id || item.id;
-      const dbPrice = priceMap[id];
-      if (dbPrice === undefined) {
+      const dbProduct = productMap[id];
+      if (!dbProduct) {
         return NextResponse.json({ error: `Product not found: ${item.name || id}` }, { status: 400 });
       }
-      computedSubtotal += dbPrice * item.quantity;
+      computedSubtotal += dbProduct.price * item.quantity;
     }
 
     // Prevent Price Tampering
@@ -117,22 +136,60 @@ export async function POST(request) {
       };
     }
 
-    // Format products for Sanity
-    const formattedProducts = cart.map(item => ({
-      _key: uuidv4(),
-      product: {
-        _type: 'reference',
-        _ref: item._id || item.id,
-      },
-      name: item.name,
-      productCode: item.productCode ? sanitizeString(item.productCode) : '',
-      size: item.selectedSize ? sanitizeString(item.selectedSize) : '',
-      quantity: item.quantity,
-      price: priceMap[item._id || item.id], // Use database verified price
-      image: item.image ? sanitizeString(item.image) : '',
-    }));
+    // Format products for Sanity with dealer references
+    const formattedProducts = cart.map(item => {
+      const id = item._id || item.id;
+      const dbProduct = productMap[id];
+      const dealer = dbProduct?.dealer;
+
+      return {
+        _key: uuidv4(),
+        product: {
+          _type: 'reference',
+          _ref: id,
+        },
+        dealer: dealer?._id ? {
+          _type: 'reference',
+          _ref: dealer._id,
+        } : undefined,
+        dealerName: dealer?.name || dealer?.businessName || '',
+        name: item.name,
+        productCode: item.productCode ? sanitizeString(item.productCode) : (dbProduct?.productCode || ''),
+        size: item.selectedSize ? sanitizeString(item.selectedSize) : '',
+        quantity: item.quantity,
+        price: dbProduct.price, // Use database verified price
+        image: item.image ? sanitizeString(item.image) : '',
+      };
+    });
 
     const orderId = `ORD-${Date.now()}`;
+
+    // Compute initial routing (Order created as Pending/Unpaid)
+    const {
+      dealerNotifications,
+      adminNotification,
+      needsAdminAttention,
+      attentionReason,
+    } = computeOrderRouting({
+      order: {
+        orderId,
+        paymentStatus: 'Pending',
+        shippingAddress: {
+          firstName,
+          lastName,
+          email,
+          phone,
+          streetAddress,
+          city,
+          postalCode,
+          country,
+        },
+        products: formattedProducts,
+        subtotal: computedSubtotal,
+        totalAmount: computedSubtotal,
+      },
+      dealersMap,
+    });
 
     // Create order in Sanity
     const newOrder = await client.create({
@@ -156,9 +213,17 @@ export async function POST(request) {
       totalAmount: computedSubtotal,
       paymentStatus: 'Pending',
       orderStatus: 'Pending',
+      dealerNotifications: dealerNotifications || [],
+      adminNotification: adminNotification || undefined,
+      needsAdminAttention,
+      attentionReason,
     });
 
-    return NextResponse.json({ success: true, orderId: newOrder.orderId });
+    return NextResponse.json({
+      success: true,
+      orderId: newOrder.orderId,
+      adminWhatsappUrl: adminNotification?.whatsappUrl || '',
+    });
 
   } catch (error) {
     console.error('Create Order Error:', error);

@@ -2,8 +2,9 @@ import { defineConfig } from 'sanity';
 import { structureTool } from 'sanity/structure';
 import { schema } from './src/sanity/schemas';
 import { SendWhatsAppAction } from './src/sanity/actions/SendWhatsAppAction';
+import { OrderWhatsAppRoutingAction } from './src/sanity/actions/OrderWhatsAppRoutingAction';
 import { PostToInstagramAction, createPublishAndInstagramAction } from './src/sanity/actions/PostToInstagramAction';
-
+import { AnalyticsToolComponent } from './src/sanity/tools/AnalyticsTool';
 
 const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'if1xc1so';
 const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || 'production';
@@ -14,19 +15,90 @@ export default defineConfig({
   title: 'AXASZ STORE Admin',
   projectId,
   dataset,
-  plugins: [structureTool()],
+  plugins: [
+    structureTool({
+      structure: (S) =>
+        S.list()
+          .title('AXASZ STORE Admin')
+          .items([
+            // Orders Section with quick filtering
+            S.listItem()
+              .title('Orders')
+              .child(
+                S.list()
+                  .title('Orders Management')
+                  .items([
+                    S.listItem()
+                      .title('All Orders')
+                      .child(S.documentTypeList('order').title('All Orders')),
+                    S.listItem()
+                      .title('Paid Orders (Ready for Dealer)')
+                      .child(
+                        S.documentList()
+                          .title('Paid Orders')
+                          .filter('_type == "order" && paymentStatus == "Paid"')
+                      ),
+                    S.listItem()
+                      .title('Unpaid / Pending Orders')
+                      .child(
+                        S.documentList()
+                          .title('Unpaid / Pending Orders')
+                          .filter('_type == "order" && (paymentStatus == "Pending" || paymentStatus == "Failed" || !defined(paymentStatus))')
+                      ),
+                    S.listItem()
+                      .title('⚠️ Needs Admin Attention')
+                      .child(
+                        S.documentList()
+                          .title('Orders Requiring Attention')
+                          .filter('_type == "order" && needsAdminAttention == true')
+                      ),
+                  ])
+              ),
+
+            // Dealers Section
+            S.listItem()
+              .title('Dealers / Suppliers')
+              .child(
+                S.documentTypeList('dealer').title('All Dealers')
+              ),
+
+            // Products Section
+            S.listItem()
+              .title('Sneakers & Products')
+              .child(
+                S.documentTypeList('product').title('All Products')
+              ),
+
+            // Customers Section
+            S.listItem()
+              .title('Customers')
+              .child(
+                S.documentTypeList('customer').title('All Customers')
+              ),
+          ]),
+    }),
+  ],
+  tools: (prev) => [
+    ...prev,
+    {
+      name: 'analytics',
+      title: 'Analytics & Growth',
+      icon: () => '📊',
+      component: AnalyticsToolComponent,
+    },
+  ],
   schema: {
     types: schema.types,
   },
   document: {
     actions: (prev, context) => {
-      // Add custom action for orders
+      // Add custom actions for orders
       if (context.schemaType === 'order') {
-        return [...prev, SendWhatsAppAction];
+        return [...prev, OrderWhatsAppRoutingAction, SendWhatsAppAction];
       }
       // Wrap publish action & add manual Instagram posting for products
       if (context.schemaType === 'product') {
-        const withInstagramPublish = prev.map(action => {
+        const withInstagramPublish = prev.map((action) => {
           if (action.action === 'publish') {
             return createPublishAndInstagramAction(action);
           }

@@ -49,6 +49,37 @@
   z-index: 10;
 }
 
+.cardActionsTop {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  z-index: 10;
+}
+
+.iconActionBtn {
+  width: 32px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #7A7A7A;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.iconActionBtn:hover {
+  color: #1A1A1A;
+  transform: scale(1.1);
+  background: white;
+}
+
 .wishlistBtn {
   position: absolute;
   top: 0.75rem;
@@ -166,6 +197,13 @@
     padding: 0.15rem 0.45rem;
   }
 
+  .cardActionsTop {
+    top: 0.5rem;
+    right: 0.5rem;
+    gap: 0.3rem;
+  }
+
+  .iconActionBtn,
   .wishlistBtn {
     width: 28px;
     height: 28px;

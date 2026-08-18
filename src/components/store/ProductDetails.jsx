@@ -3,11 +3,12 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { Star, Plus, Minus, Heart, ShoppingBag, Truck, ArrowLeftRight, CheckCircle2, Camera } from 'lucide-react';
+import { Star, Plus, Minus, Heart, ShoppingBag, Truck, ArrowLeftRight, CheckCircle2, Camera, Share2 } from 'lucide-react';
 import styles from './ProductDetails.module.css';
 import { useStore } from '@/store/useStore';
 import { urlFor } from '@/sanity/client';
 import Link from 'next/link';
+import ShareModal from '@/components/ui/ShareModal';
 
 // Helper to get hex colors from name
 const getColorHex = (name) => {
@@ -84,6 +85,7 @@ export default function ProductDetails({ product }) {
   const [selectedColor, setSelectedColor] = useState(product?.colors?.[0]);
   const [quantity, setQuantity] = useState(1);
   const [activeImage, setActiveImage] = useState(initialGallery[0]);
+  const [isShareOpen, setIsShareOpen] = useState(false);
   
   const { addToCart, toggleWishlist, wishlist } = useStore();
   const isWishlisted = wishlist.some((item) => item._id === product?._id || item.id === product?.id);
@@ -210,6 +212,9 @@ export default function ProductDetails({ product }) {
             <button className={styles.buyNowBtn} onClick={handleBuyNow}>
               Buy Now
             </button>
+            <button className={styles.shareBtn} onClick={() => setIsShareOpen(true)}>
+              <Share2 size={20} /> Share
+            </button>
             <Link href={`/try/${product._id}`} style={{ width: '100%', textDecoration: 'none' }}>
               <button className={styles.tryBtn}>
                 <Camera size={20} /> View on Model
@@ -334,12 +339,22 @@ export default function ProductDetails({ product }) {
           <button
             className={styles.stickyWishlistBtn}
             onClick={() => toggleWishlist(product)}
+            aria-label="Wishlist"
           >
             <Heart
               size={18}
               fill={isWishlisted ? 'red' : 'none'}
               color={isWishlisted ? 'red' : '#1A1A1A'}
             />
+          </button>
+
+          {/* Share */}
+          <button
+            className={styles.stickyShareBtn}
+            onClick={() => setIsShareOpen(true)}
+            aria-label="Share sneaker"
+          >
+            <Share2 size={18} />
           </button>
         </div>
 
@@ -351,6 +366,13 @@ export default function ProductDetails({ product }) {
           Buy Now
         </button>
       </div>
+
+      {/* Share Modal */}
+      <ShareModal
+        isOpen={isShareOpen}
+        onClose={() => setIsShareOpen(false)}
+        product={product}
+      />
     </>
   );
 }

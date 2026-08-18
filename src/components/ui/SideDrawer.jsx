@@ -4,6 +4,7 @@ import { X, ShoppingBag, Heart, Trash2, Plus, Minus } from 'lucide-react';
 import styles from './SideDrawer.module.css';
 import { useStore } from '@/store/useStore';
 import { urlFor } from '@/sanity/client';
+import { getProductSlug } from '@/lib/productUrl';
 
 const getProductImageUrl = (image) => {
   if (!image) return '/logo.png';
@@ -72,13 +73,31 @@ export default function SideDrawer({ isOpen, onClose, mode }) {
             <div className={styles.itemList}>
               {items.map((item) => (
                 <div key={`${item.id}-${isCart ? item.selectedSize : 'fav'}`} className={styles.itemCard}>
-                  <img src={getProductImageUrl(item.image)} alt={item.name} className={styles.itemImage} />
+                  <img 
+                    src={getProductImageUrl(item.image)} 
+                    alt={item.name} 
+                    className={styles.itemImage}
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => {
+                      onClose();
+                      router.push(`/product/${getProductSlug(item)}`);
+                    }}
+                  />
                   <div className={styles.itemDetails}>
                     <div className={styles.itemHeader}>
-                      <h4>{item.name}</h4>
+                      <h4 
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => {
+                          onClose();
+                          router.push(`/product/${getProductSlug(item)}`);
+                        }}
+                      >
+                        {item.name}
+                      </h4>
                       <button 
                         className={styles.removeItemBtn}
                         onClick={() => isCart ? removeFromCart(item.id, item.selectedSize) : toggleWishlist(item)}
+                        aria-label="Remove item"
                       >
                         <Trash2 size={16} />
                       </button>

@@ -1,9 +1,12 @@
 "use client";
 
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { Heart, Star, ShoppingBag, Eye, Zap } from 'lucide-react';
+import { Heart, Star, ShoppingBag, Eye, Zap, Share2 } from 'lucide-react';
 import { urlFor } from '@/sanity/client';
+import { getProductSlug } from '@/lib/productUrl';
+import ShareModal from '@/components/ui/ShareModal';
 import styles from './ProductCard.module.css';
 
 import { useStore } from '@/store/useStore';
@@ -11,6 +14,7 @@ import { useStore } from '@/store/useStore';
 export default function ProductCard({ product, onClick }) {
   const router = useRouter();
   const { addToCart, toggleWishlist, wishlist } = useStore();
+  const [isShareOpen, setIsShareOpen] = useState(false);
   
   const isWishlisted = wishlist.some((item) => item._id === product._id || item.id === product._id);
 
@@ -30,42 +34,68 @@ export default function ProductCard({ product, onClick }) {
     toggleWishlist(product);
   };
 
+  const handleShare = (e) => {
+    e.stopPropagation();
+    setIsShareOpen(true);
+  };
+
+  const handleCardClick = () => {
+    if (onClick) {
+      onClick(product);
+    } else {
+      router.push(`/product/${getProductSlug(product)}`);
+    }
+  };
+
   return (
-    <motion.div 
-      className={styles.card}
-      onClick={() => onClick && onClick(product)}
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-50px" }}
-      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-      whileHover="hover"
-      style={{ cursor: 'pointer' }}
-    >
-      <div className={styles.imageContainer}>
-        {product.badge && (
-          <div className={styles.badge}>{product.badge}</div>
-        )}
-        <button 
-          className={styles.wishlistBtn} 
-          onClick={handleToggleWishlist}
-          style={{ color: isWishlisted ? 'red' : 'inherit' }}
-        >
-          <Heart size={16} fill={isWishlisted ? 'red' : 'none'} />
-        </button>
-        <motion.img 
-          src={
-            product.image 
-              ? urlFor(product.image).url() 
-              : (product.images && product.images.length > 0 
-                  ? urlFor(product.images[0]).url() 
-                  : '/placeholder1.jpg')
-          } 
-          alt={product.name} 
-          className={styles.image}
-          variants={{
-            hover: { scale: 1.08, rotate: -2, transition: { duration: 0.5, ease: "easeOut" } }
-          }}
-        />
+    <>
+      <motion.div 
+        className={styles.card}
+        onClick={handleCardClick}
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-50px" }}
+        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+        whileHover="hover"
+        style={{ cursor: 'pointer' }}
+      >
+        <div className={styles.imageContainer}>
+          {product.badge && (
+            <div className={styles.badge}>{product.badge}</div>
+          )}
+          
+          <div className={styles.cardActionsTop}>
+            <button 
+              className={styles.iconActionBtn} 
+              onClick={handleToggleWishlist}
+              style={{ color: isWishlisted ? 'red' : 'inherit' }}
+              aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+            >
+              <Heart size={16} fill={isWishlisted ? 'red' : 'none'} />
+            </button>
+            <button 
+              className={styles.iconActionBtn} 
+              onClick={handleShare}
+              aria-label={`Share ${product.name}`}
+            >
+              <Share2 size={15} />
+            </button>
+          </div>
+
+          <motion.img 
+            src={
+              product.image 
+                ? urlFor(product.image).url() 
+                : (product.images && product.images.length > 0 
+                    ? urlFor(product.images[0]).url() 
+                    : '/placeholder1.jpg')
+            } 
+            alt={product.name} 
+            className={styles.image}
+            variants={{
+              hover: { scale: 1.08, rotate: -2, transition: { duration: 0.5, ease: "easeOut" } }
+            }}
+          />
         
         <motion.div 
           className={styles.quickActions}
@@ -124,5 +154,12 @@ export default function ProductCard({ product, onClick }) {
         </div>
       </div>
     </motion.div>
+
+    <ShareModal
+      isOpen={isShareOpen}
+      onClose={() => setIsShareOpen(false)}
+      product={product}
+    />
+  </>
   );
 }

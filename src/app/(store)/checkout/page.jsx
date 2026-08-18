@@ -71,27 +71,38 @@ export default function CheckoutPage() {
     setIsSubmitting(true);
     
     try {
-      await fetch('/api/orders', {
+      const response = await fetch('/api/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ formData, cart, subtotal, discount, totalAmount })
+        body: JSON.stringify({ formData, cart, subtotal, discount, totalAmount }),
       });
 
-      const storePhoneNumber = '918943029774'; 
-      let message = `*New Order from AXASZ STORE*\n\n`;
-      message += `*Customer Details:*\n`;
-      message += `Name: ${formData.firstName} ${formData.lastName}\n`;
-      message += `Phone: ${formData.phone}\n`;
-      message += `Email: ${formData.email}\n`;
-      message += `Address: ${formData.streetAddress}, ${formData.city}, ${formData.postalCode}, ${formData.country}\n\n`;
-      message += `*Order Items:*\n`;
-      cart.forEach((item, index) => {
-        message += `${index + 1}. ${item.name} - Size: ${item.selectedSize} - Qty: ${item.quantity} - ₹${item.price}\n`;
-      });
-      message += `\n*Total Amount:* ₹${totalAmount.toFixed(2)}`;
+      const data = await response.json();
 
-      const encodedMessage = encodeURIComponent(message);
-      const waUrl = `https://wa.me/${storePhoneNumber}?text=${encodedMessage}`;
+      if (!response.ok || !data.success) {
+        throw new Error(data.error || 'Failed to place order');
+      }
+
+      let waUrl = data.adminWhatsappUrl;
+
+      if (!waUrl) {
+        const storePhoneNumber = '918943029774';
+        let message = `*New Order from AXASZ STORE*\n\n`;
+        message += `*Customer Details:*\n`;
+        message += `Name: ${formData.firstName} ${formData.lastName}\n`;
+        message += `Phone: ${formData.phone}\n`;
+        message += `Email: ${formData.email}\n`;
+        message += `Address: ${formData.streetAddress}, ${formData.city}, ${formData.postalCode}, ${formData.country}\n\n`;
+        message += `*Order Items:*\n`;
+        cart.forEach((item, index) => {
+          message += `${index + 1}. ${item.name} - Size: ${item.selectedSize} - Qty: ${item.quantity} - ₹${item.price}\n`;
+        });
+        message += `\n*Total Amount:* ₹${totalAmount.toFixed(2)}`;
+
+        const encodedMessage = encodeURIComponent(message);
+        waUrl = `https://wa.me/${storePhoneNumber}?text=${encodedMessage}`;
+      }
+
       setWhatsappLink(waUrl);
       setIsSuccess(true);
       setIsSubmitting(false);
@@ -101,7 +112,7 @@ export default function CheckoutPage() {
     } catch (error) {
       console.error("Checkout error:", error);
       setIsSubmitting(false);
-      alert("There was an error processing your order. Please try again.");
+      alert(error.message || "There was an error processing your order. Please try again.");
     }
   };
 

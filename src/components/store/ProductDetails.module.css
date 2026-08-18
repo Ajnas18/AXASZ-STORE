@@ -246,6 +246,29 @@
   color: #1A1A1A;
 }
 
+.shareBtn {
+  width: 100%;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.03);
+  color: #1A1A1A;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 99px;
+  font-weight: 600;
+  font-size: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.shareBtn:hover {
+  background: rgba(0, 0, 0, 0.08);
+  border-color: #1A1A1A;
+  transform: translateY(-2px);
+}
+
 .infoList {
   display: flex;
   flex-direction: column;
@@ -721,6 +744,26 @@
     border-color: #1A1A1A;
   }
 
+  .stickyShareBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border: 1.5px solid rgba(0,0,0,0.15);
+    border-radius: 50%;
+    background: white;
+    color: #1A1A1A;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+  }
+
+  .stickyShareBtn:hover {
+    border-color: #1A1A1A;
+    background: #FAFAFA;
+  }
+
   .stickyBuyNowBtn {
     width: 100%;
     padding: 0.85rem;
@@ -739,4 +782,5 @@
     background: #333;
   }
 }
+
 
