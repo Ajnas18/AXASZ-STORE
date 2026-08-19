@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from 'react';
+import { useClient } from 'sanity';
 import {
   TrendingUp,
   TrendingDown,
@@ -22,8 +23,10 @@ import {
   PieChart,
 } from 'lucide-react';
 import styles from './AnalyticsDashboard.module.css';
+import { compileDashboardAnalytics } from '../../lib/analytics';
 
 export default function AnalyticsDashboard() {
+  const sanityClient = useClient({ apiVersion: '2023-01-01' });
   const [range, setRange] = useState('30d');
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -35,15 +38,59 @@ export default function AnalyticsDashboard() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`/api/admin/analytics?range=${range}`);
-      if (!res.ok) {
-        throw new Error('Failed to load analytics data');
-      }
-      const json = await res.json();
-      if (json.success) {
-        setData(json.data);
+      if (sanityClient) {
+        const [orders, dealers] = await Promise.all([
+          sanityClient.fetch(
+            `*[_type == "order"] | order(orderDate desc) {
+              _id,
+              orderId,
+              orderDate,
+              totalAmount,
+              subtotal,
+              discount,
+              paymentStatus,
+              orderStatus,
+              products[]{
+                product->{ _id, name, productCode, image },
+                name,
+                productCode,
+                size,
+                quantity,
+                price,
+                dealer->{ _id, name, businessName, whatsapp, status },
+                dealerName
+              }
+            }`
+          ),
+          sanityClient.fetch(
+            `*[_type == "dealer"] {
+              _id,
+              name,
+              businessName,
+              whatsapp,
+              status
+            }`
+          ),
+        ]);
+
+        const analyticsData = compileDashboardAnalytics({
+          orders: orders || [],
+          dealers: dealers || [],
+          rangeKey: range,
+        });
+
+        setData(analyticsData);
       } else {
-        throw new Error(json.error || 'Unknown error');
+        const res = await fetch(`/api/admin/analytics?range=${range}`);
+        if (!res.ok) {
+          throw new Error('Failed to load analytics data');
+        }
+        const json = await res.json();
+        if (json.success) {
+          setData(json.data);
+        } else {
+          throw new Error(json.error || 'Unknown error');
+        }
       }
     } catch (err) {
       console.error('Fetch Analytics Error:', err);
@@ -51,7 +98,7 @@ export default function AnalyticsDashboard() {
     } finally {
       setLoading(false);
     }
-  }, [range]);
+  }, [sanityClient, range]);
 
   useEffect(() => {
     fetchAnalytics();
