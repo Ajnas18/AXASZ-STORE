@@ -4,14 +4,30 @@
 
 /**
  * Returns the canonical production site URL.
- * Falls back to https://axaszstore.com if not configured or in local development.
+ * Automatically resolves current browser origin in the client,
+ * and Vercel / environment variables on the server.
  */
 export function getProductionSiteUrl() {
-  const envUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_SITE_URL;
-  if (envUrl && !envUrl.includes('localhost') && !envUrl.includes('127.0.0.1')) {
-    return envUrl.replace(/\/$/, '');
+  // 1. In browser, use the current active domain/origin
+  if (typeof window !== 'undefined' && window.location?.origin) {
+    return window.location.origin;
   }
-  return 'https://axaszstore.com';
+
+  // 2. On server, check environment variables in priority order
+  const rawUrl =
+    process.env.NEXT_PUBLIC_APP_URL ||
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    (process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL}` : '') ||
+    (process.env.NEXT_PUBLIC_VERCEL_URL ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}` : '') ||
+    (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : '') ||
+    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : '');
+
+  if (rawUrl) {
+    const formatted = rawUrl.startsWith('http') ? rawUrl : `https://${rawUrl}`;
+    return formatted.replace(/\/$/, '');
+  }
+
+  return '';
 }
 
 /**
@@ -54,12 +70,12 @@ export function getProductSlug(product) {
 
 /**
  * Returns the absolute canonical URL for a product.
- * Example: "https://axaszstore.com/product/nike-air-max-270"
+ * Example: "https://your-vercel-domain.vercel.app/product/nike-air-max-270"
  */
 export function getProductUrl(product) {
   const slug = getProductSlug(product);
   const baseUrl = getProductionSiteUrl();
-  return `${baseUrl}/product/${slug}`;
+  return baseUrl ? `${baseUrl}/product/${slug}` : `/product/${slug}`;
 }
 
 /**
