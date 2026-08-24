@@ -36,29 +36,38 @@ export const useStore = create((set) => ({
   wishlist: [],
   
   // Cart Actions
-  addToCart: (product, size, qty = 1) => set((state) => {
+  addToCart: (product, size, qty = 1, variant = null) => set((state) => {
     const productId = getProductId(product);
+    const color = variant?.color || product?.selectedColor || product?.colors?.[0] || 'Default';
+    const variantId = variant?.variantId || '';
+    const variantImage = variant?.image ? (typeof variant.image === 'string' ? variant.image : resolveProductImage(variant)) : resolveProductImage(product);
+    const itemPrice = typeof variant?.price === 'number' ? variant.price : product.price;
+
     const existingItem = state.cart.find(
-      (item) => getProductId(item) === productId && item.selectedSize === size
+      (item) => getProductId(item) === productId && item.selectedSize === size && (item.selectedColor || 'Default') === color
     );
     
     if (existingItem) {
       return {
         cart: state.cart.map((item) =>
-          getProductId(item) === productId && item.selectedSize === size
+          getProductId(item) === productId && item.selectedSize === size && (item.selectedColor || 'Default') === color
             ? { ...item, quantity: item.quantity + qty }
             : item
         ),
       };
     }
     
-    // Resolve image and ensure both id & _id are populated
+    // Resolve image and ensure both id & _id and variant metadata are populated
     const processedProduct = {
       ...product,
       id: productId,
       _id: productId,
-      image: resolveProductImage(product),
+      price: itemPrice,
+      image: variantImage,
       selectedSize: size,
+      selectedColor: color,
+      variantId: variantId,
+      asin: variant?.asin || product?.productCode || '',
       quantity: qty
     };
     
@@ -67,23 +76,33 @@ export const useStore = create((set) => ({
     };
   }),
   
-  removeFromCart: (productId, size) => set((state) => ({
+  removeFromCart: (productId, size, color) => set((state) => ({
     cart: state.cart.filter(
-      (item) => !(getProductId(item) === productId && item.selectedSize === size)
+      (item) => !(
+        getProductId(item) === productId && 
+        item.selectedSize === size && 
+        (!color || (item.selectedColor || 'Default') === color)
+      )
     ),
   })),
 
-  updateQuantity: (productId, size, quantity) => set((state) => {
+  updateQuantity: (productId, size, quantity, color) => set((state) => {
     if (quantity <= 0) {
       return {
         cart: state.cart.filter(
-          (item) => !(getProductId(item) === productId && item.selectedSize === size)
+          (item) => !(
+            getProductId(item) === productId && 
+            item.selectedSize === size && 
+            (!color || (item.selectedColor || 'Default') === color)
+          )
         ),
       };
     }
     return {
       cart: state.cart.map((item) =>
-        getProductId(item) === productId && item.selectedSize === size
+        getProductId(item) === productId && 
+        item.selectedSize === size && 
+        (!color || (item.selectedColor || 'Default') === color)
           ? { ...item, quantity }
           : item
       ),

@@ -20,10 +20,10 @@ const client = createClient({
 
 async function testFetch() {
   try {
-    const products = await client.fetch(`*[_type == "product"]{ _id, name }`);
-    console.log("SUCCESS: Public read allowed. Products:", products.length);
+    const products = await client.fetch(`*[_type == "product"][0...1]`);
+    console.log("Product:", JSON.stringify(products[0], null, 2));
   } catch (err) {
-    console.error("FAILURE: Private read required. Error:", err.message);
+    console.error("FAILURE: Error:", err.message);
   }
 }
 

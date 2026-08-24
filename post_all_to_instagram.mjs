@@ -76,7 +76,7 @@ async function main() {
       // Force use of the public Vercel domain so that Instagram's crawler can always reach the proxy endpoint
       const appUrl = envVars.NEXT_PUBLIC_APP_URL && !envVars.NEXT_PUBLIC_APP_URL.includes('localhost')
         ? envVars.NEXT_PUBLIC_APP_URL.replace(/\/$/, '')
-        : 'https://axasz-store.vercel.app';
+        : 'https://axaszstore.com';
         
       const imageUrl = `${appUrl}/api/instagram-image/${product._id}/sneaker.jpg`;
       const tryUrl = `${appUrl}/try/${product._id}`;

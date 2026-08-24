@@ -12,7 +12,7 @@ const envVars = envFile.split('\n').reduce((acc, line) => {
 }, {});
 
 const secret = envVars.SANITY_REVALIDATE_SECRET;
-const targetUrl = `https://axasz-store.vercel.app/api/instagram?secret=${secret}`;
+const targetUrl = `https://axaszstore.com/api/instagram?secret=${secret}`;
 
 // 2. Setup Sanity Client
 const client = createClient({
@@ -24,7 +24,7 @@ const client = createClient({
 
 async function runTest() {
   console.log("Starting Webhook Test for Adidas Samba...");
-  console.log(`Target URL: https://axasz-store.vercel.app/api/instagram?secret=***`);
+  console.log(`Target URL: https://axaszstore.com/api/instagram?secret=***`);
 
   let testPayload = null;
 

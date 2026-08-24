@@ -32,18 +32,32 @@ export default defineConfig({
                       .title('All Orders')
                       .child(S.documentTypeList('order').title('All Orders')),
                     S.listItem()
-                      .title('Paid Orders (Ready for Dealer)')
+                      .title('✅ Paid Orders (Ready for Dealer)')
                       .child(
                         S.documentList()
                           .title('Paid Orders')
                           .filter('_type == "order" && paymentStatus == "Paid"')
                       ),
                     S.listItem()
-                      .title('Unpaid / Pending Orders')
+                      .title('⏳ Unpaid / Pending Orders')
                       .child(
                         S.documentList()
                           .title('Unpaid / Pending Orders')
-                          .filter('_type == "order" && (paymentStatus == "Pending" || paymentStatus == "Failed" || !defined(paymentStatus))')
+                          .filter('_type == "order" && (paymentStatus == "Pending" || !defined(paymentStatus))')
+                      ),
+                    S.listItem()
+                      .title('❌ Failed / Cancelled Orders')
+                      .child(
+                        S.documentList()
+                          .title('Failed / Cancelled Orders')
+                          .filter('_type == "order" && (paymentStatus == "Failed" || paymentStatus == "Cancelled")')
+                      ),
+                    S.listItem()
+                      .title('🔄 Refunded Orders')
+                      .child(
+                        S.documentList()
+                          .title('Refunded Orders')
+                          .filter('_type == "order" && paymentStatus == "Refunded"')
                       ),
                     S.listItem()
                       .title('⚠️ Needs Admin Attention')

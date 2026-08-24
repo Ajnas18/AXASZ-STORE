@@ -47,6 +47,8 @@ export default {
             { name: 'dealerName', title: 'Dealer Name Snapshot', type: 'string' },
             { name: 'name', type: 'string' },
             { name: 'productCode', type: 'string' },
+            { name: 'variantId', title: 'Variant ID / SKU', type: 'string' },
+            { name: 'color', title: 'Color Variant', type: 'string' },
             { name: 'size', type: 'string' },
             { name: 'quantity', type: 'number' },
             { name: 'price', type: 'number' },
@@ -55,16 +57,18 @@ export default {
           preview: {
             select: {
               title: 'name',
+              color: 'color',
               size: 'size',
               quantity: 'quantity',
               price: 'price',
               dealerName: 'dealerName',
             },
             prepare(selection) {
-              const { title, size, quantity, price, dealerName } = selection;
+              const { title, color, size, quantity, price, dealerName } = selection;
               const dealerLabel = dealerName ? `Dealer: ${dealerName}` : 'No Dealer';
+              const colorLabel = color ? ` [${color}]` : '';
               return {
-                title: title || 'Product',
+                title: `${title || 'Product'}${colorLabel}`,
                 subtitle: `Qty: ${quantity || 1} | Size: ${size || 'N/A'} | ₹${price || 0} | [${dealerLabel}]`,
               };
             },
@@ -78,6 +82,12 @@ export default {
       type: 'number',
     },
     {
+      name: 'shippingCharge',
+      title: 'Shipping Charge',
+      type: 'number',
+      initialValue: 0,
+    },
+    {
       name: 'discount',
       title: 'Discount',
       type: 'number',
@@ -86,6 +96,18 @@ export default {
       name: 'totalAmount',
       title: 'Total Amount',
       type: 'number',
+    },
+    {
+      name: 'currency',
+      title: 'Currency',
+      type: 'string',
+      initialValue: 'INR',
+    },
+    {
+      name: 'paymentMethod',
+      title: 'Payment Method',
+      type: 'string',
+      initialValue: 'Razorpay',
     },
     {
       name: 'paymentStatus',
@@ -101,6 +123,30 @@ export default {
         ],
       },
       initialValue: 'Pending',
+    },
+    {
+      name: 'paidAt',
+      title: 'Payment Timestamp',
+      type: 'datetime',
+    },
+    {
+      name: 'razorpayOrderId',
+      title: 'Razorpay Order ID',
+      type: 'string',
+      description: 'Razorpay generated order identifier (e.g. order_xxx)',
+    },
+    {
+      name: 'razorpayPaymentId',
+      title: 'Razorpay Payment ID',
+      type: 'string',
+      description: 'Razorpay confirmed transaction ID (e.g. pay_xxx)',
+    },
+    {
+      name: 'razorpaySignature',
+      title: 'Razorpay Payment Signature',
+      type: 'string',
+      readOnly: true,
+      description: 'HMAC SHA256 signature verified server-side',
     },
     {
       name: 'orderStatus',
@@ -223,15 +269,17 @@ export default {
       title: 'orderId',
       orderStatus: 'orderStatus',
       paymentStatus: 'paymentStatus',
+      razorpayPaymentId: 'razorpayPaymentId',
       totalAmount: 'totalAmount',
       needsAttention: 'needsAdminAttention',
     },
     prepare(selection) {
-      const { title, orderStatus, paymentStatus, totalAmount, needsAttention } = selection;
+      const { title, orderStatus, paymentStatus, razorpayPaymentId, totalAmount, needsAttention } = selection;
       const attentionTag = needsAttention ? ' ⚠️ [NEEDS ATTENTION]' : '';
+      const payIdTag = razorpayPaymentId ? ` | PayID: ${razorpayPaymentId}` : '';
       return {
         title: `#${title || 'Order'}${attentionTag}`,
-        subtitle: `Payment: ${paymentStatus || 'Pending'} | Status: ${orderStatus || 'Pending'} | ₹${totalAmount || 0}`,
+        subtitle: `Payment: ${paymentStatus || 'Pending'}${payIdTag} | Status: ${orderStatus || 'Pending'} | ₹${totalAmount || 0}`,
       };
     },
   },

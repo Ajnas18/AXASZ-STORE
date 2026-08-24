@@ -206,11 +206,28 @@ export default function OrderDetails() {
                   <div className="mt-4 pt-4 border-t border-gray-200 flex justify-between items-center">
                     <span className="text-sm text-gray-500">Payment Status</span>
                     <span className={`text-xs font-bold px-2 py-1 rounded ${
-                      order.paymentStatus === 'Paid' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'
+                      order.paymentStatus === 'Paid' ? 'bg-green-100 text-green-700' : 
+                      order.paymentStatus === 'Failed' ? 'bg-red-100 text-red-700' :
+                      order.paymentStatus === 'Refunded' ? 'bg-purple-100 text-purple-700' :
+                      'bg-amber-100 text-amber-700'
                     }`}>
-                      {order.paymentStatus}
+                      {order.paymentStatus || 'Pending'}
                     </span>
                   </div>
+
+                  {order.razorpayPaymentId && (
+                    <div className="mt-2 pt-2 border-t border-gray-100 flex justify-between items-center text-xs">
+                      <span className="text-gray-500">Razorpay Payment ID</span>
+                      <span className="font-mono font-medium text-gray-900">{order.razorpayPaymentId}</span>
+                    </div>
+                  )}
+
+                  {order.paidAt && (
+                    <div className="mt-1 flex justify-between items-center text-xs">
+                      <span className="text-gray-500">Paid On</span>
+                      <span className="text-gray-700">{new Date(order.paidAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

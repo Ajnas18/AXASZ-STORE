@@ -27,7 +27,7 @@ export function getProductionSiteUrl() {
     return formatted.replace(/\/$/, '');
   }
 
-  return '';
+  return 'https://axaszstore.com';
 }
 
 /**

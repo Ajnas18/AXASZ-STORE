@@ -70,16 +70,24 @@ export function generateDealerPaidMessage({ order, dealer, items }) {
 
   if (items.length === 1) {
     const item = items[0];
-    const sizePart = item.size ? ` (Size: ${item.size})` : '';
-    message += `Product:\n${item.name}${sizePart}\n\n`;
+    const details = [
+      item.color ? `Color: ${item.color}` : '',
+      item.size ? `Size: UK ${item.size}` : '',
+    ].filter(Boolean).join(', ');
+    const detailsPart = details ? ` (${details})` : '';
+    message += `Product:\n${item.name}${detailsPart}\n\n`;
     message += `Quantity: ${item.quantity}\n`;
     message += `Price: ₹${item.price.toLocaleString('en-IN')}\n\n`;
     message += `Total: ₹${dealerSubtotal.toLocaleString('en-IN')}\n\n`;
   } else {
     message += `Products:\n`;
     items.forEach((item, idx) => {
-      const sizePart = item.size ? ` - Size: ${item.size}` : '';
-      message += `${idx + 1}. ${item.name}${sizePart} - Qty: ${item.quantity} - ₹${item.price.toLocaleString('en-IN')}\n`;
+      const details = [
+        item.color ? `Color: ${item.color}` : '',
+        item.size ? `Size: UK ${item.size}` : '',
+      ].filter(Boolean).join(', ');
+      const detailsPart = details ? ` (${details})` : '';
+      message += `${idx + 1}. ${item.name}${detailsPart} - Qty: ${item.quantity} - ₹${item.price.toLocaleString('en-IN')}\n`;
     });
     message += `\nTotal Quantity: ${totalQuantity}\n`;
     message += `Total: ₹${dealerSubtotal.toLocaleString('en-IN')}\n\n`;
@@ -111,14 +119,22 @@ export function generateAdminUnpaidMessage({ order, paymentStatus = 'UNPAID' }) 
 
   if (items.length === 1) {
     const item = items[0];
-    const sizePart = item.size ? ` (Size: ${item.size})` : '';
-    message += `Product:\n${item.name}${sizePart}\n\n`;
+    const details = [
+      item.color ? `Color: ${item.color}` : '',
+      item.size ? `Size: UK ${item.size}` : '',
+    ].filter(Boolean).join(', ');
+    const detailsPart = details ? ` (${details})` : '';
+    message += `Product:\n${item.name}${detailsPart}\n\n`;
     message += `Quantity: ${item.quantity}\n\n`;
   } else {
     message += `Products:\n`;
     items.forEach((item, idx) => {
-      const sizePart = item.size ? ` (Size: ${item.size})` : '';
-      message += `${idx + 1}. ${item.name}${sizePart} - Qty: ${item.quantity}\n`;
+      const details = [
+        item.color ? `Color: ${item.color}` : '',
+        item.size ? `Size: UK ${item.size}` : '',
+      ].filter(Boolean).join(', ');
+      const detailsPart = details ? ` (${details})` : '';
+      message += `${idx + 1}. ${item.name}${detailsPart} - Qty: ${item.quantity}\n`;
     });
     message += `\n`;
   }
@@ -147,8 +163,12 @@ export function generateAdminUnassignedDealerMessage({ order, unassignedItems })
   message += `The following paid items do not have an active dealer assigned:\n`;
 
   unassignedItems.forEach((item, idx) => {
-    const sizePart = item.size ? ` (Size: ${item.size})` : '';
-    message += `${idx + 1}. ${item.name}${sizePart} - Qty: ${item.quantity} - ₹${item.price.toLocaleString('en-IN')}\n`;
+    const details = [
+      item.color ? `Color: ${item.color}` : '',
+      item.size ? `Size: UK ${item.size}` : '',
+    ].filter(Boolean).join(', ');
+    const detailsPart = details ? ` (${details})` : '';
+    message += `${idx + 1}. ${item.name}${detailsPart} - Qty: ${item.quantity} - ₹${item.price.toLocaleString('en-IN')}\n`;
   });
 
   message += `\nDelivery Address:\n${addressText}\n\n`;

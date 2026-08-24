@@ -32,6 +32,17 @@ export default function Footer() {
         </div>
 
         <div className={styles.column}>
+          <h3 className={styles.title}>Policies</h3>
+          <div className={styles.linkList}>
+            <Link href="/privacy-policy" className={styles.link}>Privacy Policy</Link>
+            <Link href="/terms-and-conditions" className={styles.link}>Terms &amp; Conditions</Link>
+            <Link href="/refund-policy" className={styles.link}>Refund Policy</Link>
+            <Link href="/cancellation-policy" className={styles.link}>Cancellation Policy</Link>
+            <Link href="/shipping-policy" className={styles.link}>Shipping &amp; Delivery</Link>
+          </div>
+        </div>
+
+        <div className={styles.column}>
           <h3 className={styles.title}>Available Brands</h3>
           <div className={styles.linkList}>
             <span className={styles.link}>Nike</span>
@@ -71,6 +82,17 @@ export default function Footer() {
 
       <div className={styles.bottomBar}>
         <p>&copy; 2026 AXASZ STORE. All Rights Reserved.</p>
+        <div className={styles.bottomLinks}>
+          <Link href="/privacy-policy" className={styles.bottomLink}>Privacy</Link>
+          <span>•</span>
+          <Link href="/terms-and-conditions" className={styles.bottomLink}>Terms</Link>
+          <span>•</span>
+          <Link href="/refund-policy" className={styles.bottomLink}>Refunds</Link>
+          <span>•</span>
+          <Link href="/cancellation-policy" className={styles.bottomLink}>Cancellation</Link>
+          <span>•</span>
+          <Link href="/shipping-policy" className={styles.bottomLink}>Shipping</Link>
+        </div>
         <p>Premium Sneakers for Everyone</p>
       </div>
     </footer>

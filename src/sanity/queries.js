@@ -13,6 +13,19 @@ export const ALL_PRODUCTS_QUERY = `*[_type == "product"] | order(_createdAt desc
   image,
   modelImage,
   images,
+  variants[]{
+    variantId,
+    asin,
+    color,
+    colorHex,
+    price,
+    originalPrice,
+    inStock,
+    sizes,
+    image,
+    images,
+    modelImage
+  },
   slug
 }`;
 
@@ -31,6 +44,19 @@ export const SINGLE_PRODUCT_QUERY = `*[_type == "product" && _id == $id][0] {
   image,
   modelImage,
   images,
+  variants[]{
+    variantId,
+    asin,
+    color,
+    colorHex,
+    price,
+    originalPrice,
+    inStock,
+    sizes,
+    image,
+    images,
+    modelImage
+  },
   slug
 }`;
 
@@ -55,6 +81,19 @@ export const PRODUCT_BY_IDENTIFIER_QUERY = `*[_type == "product" && (
   image,
   modelImage,
   images,
+  variants[]{
+    variantId,
+    asin,
+    color,
+    colorHex,
+    price,
+    originalPrice,
+    inStock,
+    sizes,
+    image,
+    images,
+    modelImage
+  },
   slug
 }`;
 

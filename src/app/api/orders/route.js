@@ -4,6 +4,7 @@ import { getSession } from '@/lib/auth';
 import { v4 as uuidv4 } from 'uuid';
 import { rateLimit, getClientIp } from '@/lib/rateLimit';
 import { computeOrderRouting } from '@/lib/orderRouting';
+import { getRazorpayClient } from '@/lib/razorpay';
 
 // Input sanitization helper to strip HTML tags
 function sanitizeString(str) {
@@ -155,6 +156,8 @@ export async function POST(request) {
         dealerName: dealer?.name || dealer?.businessName || '',
         name: item.name,
         productCode: item.productCode ? sanitizeString(item.productCode) : (dbProduct?.productCode || ''),
+        variantId: item.variantId ? sanitizeString(item.variantId) : '',
+        color: item.selectedColor ? sanitizeString(item.selectedColor) : '',
         size: item.selectedSize ? sanitizeString(item.selectedSize) : '',
         quantity: item.quantity,
         price: dbProduct.price, // Use database verified price
@@ -163,6 +166,33 @@ export async function POST(request) {
     });
 
     const orderId = `ORD-${Date.now()}`;
+
+    // 5. Create order in Razorpay
+    let razorpayOrder = null;
+    try {
+      const razorpay = getRazorpayClient();
+      const amountInPaise = Math.round(computedSubtotal * 100);
+      
+      razorpayOrder = await razorpay.orders.create({
+        amount: amountInPaise,
+        currency: 'INR',
+        receipt: orderId,
+        notes: {
+          orderId,
+          customerName: `${firstName} ${lastName}`,
+          customerEmail: email,
+          customerPhone: phone,
+        },
+      });
+    } catch (rzpErr) {
+      console.error('Razorpay Order Creation Error:', rzpErr);
+      return NextResponse.json(
+        { 
+          error: rzpErr.message || 'Payment gateway initialization failed. Please check server Razorpay credentials.' 
+        }, 
+        { status: 502 }
+      );
+    }
 
     // Compute initial routing (Order created as Pending/Unpaid)
     const {
@@ -191,7 +221,7 @@ export async function POST(request) {
       dealersMap,
     });
 
-    // Create order in Sanity
+    // Create order in Sanity with Razorpay Order ID
     const newOrder = await client.create({
       _type: 'order',
       orderId,
@@ -209,10 +239,14 @@ export async function POST(request) {
       },
       products: formattedProducts,
       subtotal: computedSubtotal,
+      shippingCharge: 0,
       discount: 0,
       totalAmount: computedSubtotal,
+      currency: 'INR',
+      paymentMethod: 'Razorpay',
       paymentStatus: 'Pending',
       orderStatus: 'Pending',
+      razorpayOrderId: razorpayOrder.id,
       dealerNotifications: dealerNotifications || [],
       adminNotification: adminNotification || undefined,
       needsAdminAttention,
@@ -222,12 +256,21 @@ export async function POST(request) {
     return NextResponse.json({
       success: true,
       orderId: newOrder.orderId,
+      razorpayOrderId: razorpayOrder.id,
+      amount: razorpayOrder.amount, // in paise
+      currency: razorpayOrder.currency || 'INR',
+      keyId: process.env.RAZORPAY_KEY_ID || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+      customer: {
+        name: `${firstName} ${lastName}`,
+        email,
+        phone,
+      },
       adminWhatsappUrl: adminNotification?.whatsappUrl || '',
     });
 
   } catch (error) {
     console.error('Create Order Error:', error);
-    return NextResponse.json({ error: 'Failed to create order' }, { status: 500 });
+    return NextResponse.json({ error: error.message || 'Failed to create order' }, { status: 500 });
   }
 }
 
