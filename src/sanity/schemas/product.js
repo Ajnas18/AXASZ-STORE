@@ -1,3 +1,111 @@
+export const colorVariantSchema = {
+  name: 'colorVariant',
+  title: 'Color Variant',
+  type: 'object',
+  fields: [
+    {
+      name: 'variantId',
+      title: 'Variant ID / SKU',
+      type: 'string',
+      description: 'Unique identifier for this variant (e.g. AXS0011-RED, NIKE-001-WHITE)',
+      validation: (Rule) => Rule.required(),
+    },
+    {
+      name: 'asin',
+      title: 'ASIN / Amazon ID',
+      type: 'string',
+      description: 'Amazon ASIN for this specific variant (e.g. B08N5WRWNW)',
+    },
+    {
+      name: 'color',
+      title: 'Color Name',
+      type: 'string',
+      description: 'E.g. White, University Blue, Bred, Black/White',
+      validation: (Rule) => Rule.required(),
+    },
+    {
+      name: 'colorHex',
+      title: 'Color Hex / Swatch Code',
+      type: 'string',
+      description: 'Hex color code for swatch display (e.g. #3b82f6 or #ffffff). Optional.',
+    },
+    {
+      name: 'price',
+      title: 'Variant Price Override',
+      type: 'number',
+      description: 'Leave blank to use the main sneaker price',
+    },
+    {
+      name: 'originalPrice',
+      title: 'Variant Original MRP Override',
+      type: 'number',
+      description: 'Leave blank to use main sneaker MRP',
+    },
+    {
+      name: 'inStock',
+      title: 'In Stock',
+      type: 'boolean',
+      initialValue: true,
+    },
+    {
+      name: 'sizes',
+      title: 'Variant Sizes Available',
+      type: 'array',
+      of: [{ type: 'number' }],
+      description: 'Sizes available specifically for this color variant. Defaults to main sizes if empty.',
+    },
+    {
+      name: 'image',
+      title: 'Variant Cover / Main Image',
+      type: 'image',
+      description: 'Main front/profile image for this color variant',
+      options: {
+        hotspot: true,
+      },
+      validation: (Rule) => Rule.required(),
+    },
+    {
+      name: 'images',
+      title: 'Variant Gallery Images',
+      type: 'array',
+      description: 'Additional photos strictly for THIS color variant (side, back, sole, top, etc.)',
+      of: [
+        {
+          type: 'image',
+          options: {
+            hotspot: true,
+          },
+        },
+      ],
+    },
+    {
+      name: 'modelImage',
+      title: 'Variant Model / Wearing Image',
+      type: 'image',
+      description: 'Model photo wearing this specific color variant (Optional)',
+      options: {
+        hotspot: true,
+      },
+    },
+  ],
+  preview: {
+    select: {
+      title: 'color',
+      subtitle: 'variantId',
+      media: 'image',
+      price: 'price',
+    },
+    prepare(selection) {
+      const { title, subtitle, media, price } = selection;
+      return {
+        title: `${title || 'Color Variant'}`,
+        subtitle: `${subtitle || 'No ID'}${price ? ` • ₹${price}` : ''}`,
+        media: media,
+      };
+    },
+  },
+};
+
 export const productSchema = {
   name: 'product',
   title: 'Sneaker',
@@ -130,113 +238,7 @@ export const productSchema = {
       type: 'array',
       description: 'Define specific color variants each with their own dedicated image gallery, ASIN, and stock.',
       of: [
-        {
-          type: 'object',
-          name: 'colorVariant',
-          title: 'Color Variant',
-          fields: [
-            {
-              name: 'variantId',
-              title: 'Variant ID / SKU',
-              type: 'string',
-              description: 'Unique identifier for this variant (e.g. AXS0011-RED, NIKE-001-WHITE)',
-              validation: (Rule) => Rule.required(),
-            },
-            {
-              name: 'asin',
-              title: 'ASIN / Amazon ID',
-              type: 'string',
-              description: 'Amazon ASIN for this specific variant (e.g. B08N5WRWNW)',
-            },
-            {
-              name: 'color',
-              title: 'Color Name',
-              type: 'string',
-              description: 'E.g. White, University Blue, Bred, Black/White',
-              validation: (Rule) => Rule.required(),
-            },
-            {
-              name: 'colorHex',
-              title: 'Color Hex / Swatch Code',
-              type: 'string',
-              description: 'Hex color code for swatch display (e.g. #3b82f6 or #ffffff). Optional.',
-            },
-            {
-              name: 'price',
-              title: 'Variant Price Override',
-              type: 'number',
-              description: 'Leave blank to use the main sneaker price',
-            },
-            {
-              name: 'originalPrice',
-              title: 'Variant Original MRP Override',
-              type: 'number',
-              description: 'Leave blank to use main sneaker MRP',
-            },
-            {
-              name: 'inStock',
-              title: 'In Stock',
-              type: 'boolean',
-              initialValue: true,
-            },
-            {
-              name: 'sizes',
-              title: 'Variant Sizes Available',
-              type: 'array',
-              of: [{ type: 'number' }],
-              description: 'Sizes available specifically for this color variant. Defaults to main sizes if empty.',
-            },
-            {
-              name: 'image',
-              title: 'Variant Cover / Main Image',
-              type: 'image',
-              description: 'Main front/profile image for this color variant',
-              options: {
-                hotspot: true,
-              },
-              validation: (Rule) => Rule.required(),
-            },
-            {
-              name: 'images',
-              title: 'Variant Gallery Images',
-              type: 'array',
-              description: 'Additional photos strictly for THIS color variant (side, back, sole, top, etc.)',
-              of: [
-                {
-                  type: 'image',
-                  options: {
-                    hotspot: true,
-                  },
-                },
-              ],
-            },
-            {
-              name: 'modelImage',
-              title: 'Variant Model / Wearing Image',
-              type: 'image',
-              description: 'Model photo wearing this specific color variant (Optional)',
-              options: {
-                hotspot: true,
-              },
-            },
-          ],
-          preview: {
-            select: {
-              title: 'color',
-              subtitle: 'variantId',
-              media: 'image',
-              price: 'price',
-            },
-            prepare(selection) {
-              const { title, subtitle, media, price } = selection;
-              return {
-                title: `${title || 'Color Variant'}`,
-                subtitle: `${subtitle || 'No ID'}${price ? ` • ₹${price}` : ''}`,
-                media: media,
-              };
-            },
-          },
-        },
+        { type: 'colorVariant' },
       ],
     },
   ],
