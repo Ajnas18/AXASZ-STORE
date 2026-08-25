@@ -39,6 +39,11 @@ export default function ProductCard({ product, onClick }) {
     setIsShareOpen(true);
   };
 
+  const handleQuickView = (e) => {
+    e.stopPropagation();
+    handleCardClick();
+  };
+
   const handleCardClick = () => {
     if (onClick) {
       onClick(product);
@@ -104,7 +109,7 @@ export default function ProductCard({ product, onClick }) {
           }}
           initial={{ y: 20, opacity: 0 }}
         >
-          <button className={styles.actionBtn}>
+          <button className={styles.actionBtn} onClick={handleQuickView}>
             <Eye size={14} /> Quick View
           </button>
           <button className={`${styles.actionBtn} ${styles.primaryBtn}`} onClick={handleAddToCart}>

@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence, useAnimate } from 'framer-motion';
 import Link from 'next/link';
-import { SlidersHorizontal, ChevronDown, Calendar, Users, ShieldCheck, Star, ThumbsUp, Truck, Camera, Mail, MessageCircle, Phone, MapPin, Send, Lock, Headset } from 'lucide-react';
+import { SlidersHorizontal, ChevronDown, Calendar, Users, User, ShieldCheck, Star, ThumbsUp, Truck, Camera, Mail, MessageCircle, MessageSquare, Phone, MapPin, Send, Lock, Headset } from 'lucide-react';
 import { Playfair_Display } from 'next/font/google';
 import ProductCard from '@/components/store/ProductCard';
 import ProductDetails from '@/components/store/ProductDetails';
@@ -154,7 +154,7 @@ export default function HomeClient({ initialProducts = [] }) {
     // Sorting
     switch (sortBy) {
       case "Newest":
-        result = [...result].sort((a, b) => b.id - a.id);
+        result = [...result].sort((a, b) => new Date(b._createdAt || 0) - new Date(a._createdAt || 0));
         break;
       case "Price: Low to High":
         result = [...result].sort((a, b) => a.price - b.price);
@@ -693,44 +693,73 @@ export default function HomeClient({ initialProducts = [] }) {
               transition={{ delay: 0.4 }}
             >
               <div className={styles.contactFormCard}>
+                <div className={styles.formHeader}>
+                  <h3 className={styles.formTitle}>Send us a Message</h3>
+                  <p className={styles.formSubtitle}>Have a question about sizes, models, or orders? We're here to help.</p>
+                </div>
+
                 <form className={styles.contactForm} onSubmit={handleContactSubmit}>
                   <div className={styles.formRow}>
                     <div className={styles.formGroup}>
-                      <input
-                        type="text"
-                        placeholder="Your name (e.g. Michael Jc)"
-                        value={contactForm.name}
-                        onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })}
-                        required
-                      />
+                      <label className={styles.fieldLabel}>
+                        Your Name <span className={styles.requiredStar}>*</span>
+                      </label>
+                      <div className={styles.inputWrapper}>
+                        <User size={18} className={styles.inputIcon} />
+                        <input
+                          type="text"
+                          placeholder="e.g. Michael Jc"
+                          value={contactForm.name}
+                          onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })}
+                          required
+                        />
+                      </div>
                     </div>
                     <div className={styles.formGroup}>
+                      <label className={styles.fieldLabel}>Email Address</label>
+                      <div className={styles.inputWrapper}>
+                        <Mail size={18} className={styles.inputIcon} />
+                        <input
+                          type="email"
+                          placeholder="e.g. michael@example.com"
+                          value={contactForm.email}
+                          onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className={styles.formGroup}>
+                    <label className={styles.fieldLabel}>Phone Number</label>
+                    <div className={styles.inputWrapper}>
+                      <Phone size={18} className={styles.inputIcon} />
                       <input
-                        type="email"
-                        placeholder="Email address"
-                        value={contactForm.email}
-                        onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })}
+                        type="tel"
+                        placeholder="e.g. +91 89430 29774"
+                        value={contactForm.phone}
+                        onChange={(e) => setContactForm({ ...contactForm, phone: e.target.value })}
                       />
                     </div>
                   </div>
+
                   <div className={styles.formGroup}>
-                    <input
-                      type="tel"
-                      placeholder="Phone number"
-                      value={contactForm.phone}
-                      onChange={(e) => setContactForm({ ...contactForm, phone: e.target.value })}
-                    />
+                    <label className={styles.fieldLabel}>
+                      Your Message <span className={styles.requiredStar}>*</span>
+                    </label>
+                    <div className={styles.inputWrapperTextarea}>
+                      <MessageSquare size={18} className={styles.textareaIcon} />
+                      <textarea
+                        placeholder="e.g. Do you have Jordan 4s in size 10?"
+                        value={contactForm.message}
+                        onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })}
+                        required
+                        rows={4}
+                      ></textarea>
+                    </div>
                   </div>
-                  <div className={styles.formGroup}>
-                    <textarea
-                      placeholder="What's on your mind? (e.g. Do you have the Jordan 4s in size 10?)"
-                      value={contactForm.message}
-                      onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })}
-                      required
-                    ></textarea>
-                  </div>
+
                   <button type="submit" className={styles.submitBtn}>
-                    <Send size={18} /> Send Message
+                    <Send size={18} /> <span>Send Message</span>
                   </button>
                 </form>
               </div>

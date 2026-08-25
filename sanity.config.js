@@ -3,6 +3,7 @@ import { structureTool } from 'sanity/structure';
 import { schema } from './src/sanity/schemas';
 import { SendWhatsAppAction } from './src/sanity/actions/SendWhatsAppAction';
 import { OrderWhatsAppRoutingAction } from './src/sanity/actions/OrderWhatsAppRoutingAction';
+import { ConfirmOrderAction } from './src/sanity/actions/ConfirmOrderAction';
 import { PostToInstagramAction, createPublishAndInstagramAction } from './src/sanity/actions/PostToInstagramAction';
 import { AnalyticsToolComponent } from './src/sanity/tools/AnalyticsTool';
 
@@ -32,21 +33,35 @@ export default defineConfig({
                       .title('All Orders')
                       .child(S.documentTypeList('order').title('All Orders')),
                     S.listItem()
-                      .title('✅ Paid Orders (Ready for Dealer)')
+                      .title('📋 Pending Confirmation (Connect Store)')
+                      .child(
+                        S.documentList()
+                          .title('Pending Confirmation Orders')
+                          .filter('_type == "order" && orderStatus == "Pending Confirmation"')
+                      ),
+                    S.listItem()
+                      .title(' Confirmed Orders (Awaiting Payment)')
+                      .child(
+                        S.documentList()
+                          .title('Confirmed Orders')
+                          .filter('_type == "order" && orderStatus == "Confirmed" && paymentStatus != "Paid"')
+                      ),
+                    S.listItem()
+                      .title(' Paid Orders (Ready for Dealer)')
                       .child(
                         S.documentList()
                           .title('Paid Orders')
                           .filter('_type == "order" && paymentStatus == "Paid"')
                       ),
                     S.listItem()
-                      .title('⏳ Unpaid / Pending Orders')
+                      .title(' Unpaid / Pending Orders')
                       .child(
                         S.documentList()
                           .title('Unpaid / Pending Orders')
                           .filter('_type == "order" && (paymentStatus == "Pending" || !defined(paymentStatus))')
                       ),
                     S.listItem()
-                      .title('❌ Failed / Cancelled Orders')
+                      .title(' Failed / Cancelled Orders')
                       .child(
                         S.documentList()
                           .title('Failed / Cancelled Orders')
@@ -60,7 +75,7 @@ export default defineConfig({
                           .filter('_type == "order" && paymentStatus == "Refunded"')
                       ),
                     S.listItem()
-                      .title('⚠️ Needs Admin Attention')
+                      .title('Needs Admin Attention')
                       .child(
                         S.documentList()
                           .title('Orders Requiring Attention')
@@ -108,7 +123,7 @@ export default defineConfig({
     actions: (prev, context) => {
       // Add custom actions for orders
       if (context.schemaType === 'order') {
-        return [...prev, OrderWhatsAppRoutingAction, SendWhatsAppAction];
+        return [ConfirmOrderAction, ...prev, OrderWhatsAppRoutingAction, SendWhatsAppAction];
       }
       // Wrap publish action & add manual Instagram posting for products
       if (context.schemaType === 'product') {

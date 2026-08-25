@@ -13,20 +13,29 @@ export default function SearchModal({ isOpen, onClose }) {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // Lock scroll when open and focus search input
+  // Lock scroll when open, focus search input, and add Escape key listener
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
       setTimeout(() => {
         inputRef.current?.focus();
       }, 100);
+
+      const handleKeyDown = (e) => {
+        if (e.key === 'Escape') {
+          onClose();
+        }
+      };
+
+      window.addEventListener('keydown', handleKeyDown);
+      return () => {
+        document.body.style.overflow = 'auto';
+        window.removeEventListener('keydown', handleKeyDown);
+      };
     } else {
       document.body.style.overflow = 'auto';
     }
-    return () => {
-      document.body.style.overflow = 'auto';
-    };
-  }, [isOpen]);
+  }, [isOpen, onClose]);
 
   // Fetch products from our internal API when modal opens
   useEffect(() => {

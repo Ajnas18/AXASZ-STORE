@@ -28,9 +28,27 @@ export async function POST(request) {
     }
 
     const body = await request.json();
-    const { formData, cart, subtotal, discount, totalAmount } = body;
+    const { 
+      formData, 
+      cart, 
+      subtotal, 
+      discount, 
+      totalAmount, 
+      policyConsent, 
+      policyConsentAt, 
+      policyVersions,
+      actionType = 'pay_now'
+    } = body;
 
-    // 2. Input Structure Validation
+    // 2. Policy Consent Validation
+    if (policyConsent !== true) {
+      return NextResponse.json(
+        { error: 'Please accept the Terms & Conditions and store policies before continuing.' },
+        { status: 400 }
+      );
+    }
+
+    // 3. Input Structure Validation
     if (!formData || typeof formData !== 'object') {
       return NextResponse.json({ error: 'Invalid shipping details structure' }, { status: 400 });
     }
@@ -47,28 +65,62 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Price fields must be valid numbers' }, { status: 400 });
     }
 
-    // 3. Shipping Fields & Format Validation
-    const firstName = sanitizeString(formData.firstName);
-    const lastName = sanitizeString(formData.lastName);
+    // 4. Address Fields & Format Validation
+    const fullName = sanitizeString(formData.fullName || `${formData.firstName || ''} ${formData.lastName || ''}`.trim());
     const email = sanitizeString(formData.email).toLowerCase();
-    const phone = sanitizeString(formData.phone);
-    const streetAddress = sanitizeString(formData.streetAddress);
+    const phone = sanitizeString(formData.phone || formData.mobileNumber);
+    const houseBuilding = sanitizeString(formData.houseBuilding);
+    const streetLocality = sanitizeString(formData.streetLocality || formData.streetAddress);
     const city = sanitizeString(formData.city);
-    const postalCode = sanitizeString(formData.postalCode);
-    const country = sanitizeString(formData.country);
+    const state = sanitizeString(formData.state);
+    const postalCode = sanitizeString(formData.postalCode || formData.pincode);
+    const landmark = sanitizeString(formData.landmark || '');
+    const country = sanitizeString(formData.country || 'India');
 
-    if (
-      !firstName || !lastName || !email || !phone || 
-      !streetAddress || !city || !postalCode || !country
-    ) {
-      return NextResponse.json({ error: 'Missing required shipping fields' }, { status: 400 });
+    // Split name for backward compatibility if needed
+    const nameParts = fullName.split(' ');
+    const firstName = sanitizeString(formData.firstName || nameParts[0] || fullName);
+    const lastName = sanitizeString(formData.lastName || nameParts.slice(1).join(' ') || '');
+
+    // Full composite street address
+    const streetAddress = sanitizeString(
+      formData.streetAddress || 
+      [houseBuilding, streetLocality, landmark ? `Landmark: ${landmark}` : ''].filter(Boolean).join(', ')
+    );
+
+    if (!fullName || fullName.length < 2) {
+      return NextResponse.json({ error: 'Please enter a valid full name (minimum 2 characters)' }, { status: 400 });
     }
 
-    if (!emailRegex.test(email)) {
-      return NextResponse.json({ error: 'Invalid email address format' }, { status: 400 });
+    if (!phone || phone.replace(/\D/g, '').length < 10) {
+      return NextResponse.json({ error: 'Please enter a valid 10-digit mobile number' }, { status: 400 });
     }
 
-    // 4. Cart Integrity Verification & Price Validation
+    if (!email || !emailRegex.test(email)) {
+      return NextResponse.json({ error: 'Please enter a valid email address' }, { status: 400 });
+    }
+
+    if (!houseBuilding) {
+      return NextResponse.json({ error: 'Please enter house / building name' }, { status: 400 });
+    }
+
+    if (!streetLocality) {
+      return NextResponse.json({ error: 'Please enter street / locality' }, { status: 400 });
+    }
+
+    if (!city) {
+      return NextResponse.json({ error: 'Please enter city' }, { status: 400 });
+    }
+
+    if (!state) {
+      return NextResponse.json({ error: 'Please enter state' }, { status: 400 });
+    }
+
+    if (!postalCode || !/^[1-9][0-9]{5}$/.test(postalCode.replace(/\s/g, ''))) {
+      return NextResponse.json({ error: 'Please enter a valid 6-digit PIN / postal code' }, { status: 400 });
+    }
+
+    // 5. Cart Integrity Verification & Price Validation
     const productIds = cart.map(item => item._id || item.id).filter(Boolean);
     if (productIds.length !== cart.length) {
       return NextResponse.json({ error: 'Some items in the cart are missing IDs' }, { status: 400 });
@@ -166,35 +218,54 @@ export async function POST(request) {
     });
 
     const orderId = `ORD-${Date.now()}`;
+    const initialOrderStatus = actionType === 'connect_store' ? 'Pending Confirmation' : 'Pending';
 
-    // 5. Create order in Razorpay
+    // 6. Create Razorpay order ONLY if actionType is 'pay_now'
     let razorpayOrder = null;
-    try {
-      const razorpay = getRazorpayClient();
-      const amountInPaise = Math.round(computedSubtotal * 100);
-      
-      razorpayOrder = await razorpay.orders.create({
-        amount: amountInPaise,
-        currency: 'INR',
-        receipt: orderId,
-        notes: {
-          orderId,
-          customerName: `${firstName} ${lastName}`,
-          customerEmail: email,
-          customerPhone: phone,
-        },
-      });
-    } catch (rzpErr) {
-      console.error('Razorpay Order Creation Error:', rzpErr);
-      return NextResponse.json(
-        { 
-          error: rzpErr.message || 'Payment gateway initialization failed. Please check server Razorpay credentials.' 
-        }, 
-        { status: 502 }
-      );
+    if (actionType === 'pay_now') {
+      try {
+        const razorpay = getRazorpayClient();
+        const amountInPaise = Math.round(computedSubtotal * 100);
+        
+        razorpayOrder = await razorpay.orders.create({
+          amount: amountInPaise,
+          currency: 'INR',
+          receipt: orderId,
+          notes: {
+            orderId,
+            customerName: `${firstName} ${lastName}`,
+            customerEmail: email,
+            customerPhone: phone,
+          },
+        });
+      } catch (rzpErr) {
+        console.error('Razorpay Order Creation Error:', rzpErr);
+        return NextResponse.json(
+          { 
+            error: rzpErr.message || 'Payment gateway initialization failed. Please check server Razorpay credentials.' 
+          }, 
+          { status: 502 }
+        );
+      }
     }
 
-    // Compute initial routing (Order created as Pending/Unpaid)
+    // Compute initial routing
+    const shippingAddressObj = {
+      fullName,
+      firstName,
+      lastName,
+      email,
+      phone,
+      houseBuilding,
+      streetLocality,
+      streetAddress,
+      city,
+      state,
+      postalCode,
+      landmark,
+      country,
+    };
+
     const {
       dealerNotifications,
       adminNotification,
@@ -204,16 +275,8 @@ export async function POST(request) {
       order: {
         orderId,
         paymentStatus: 'Pending',
-        shippingAddress: {
-          firstName,
-          lastName,
-          email,
-          phone,
-          streetAddress,
-          city,
-          postalCode,
-          country,
-        },
+        orderStatus: initialOrderStatus,
+        shippingAddress: shippingAddressObj,
         products: formattedProducts,
         subtotal: computedSubtotal,
         totalAmount: computedSubtotal,
@@ -221,22 +284,21 @@ export async function POST(request) {
       dealersMap,
     });
 
-    // Create order in Sanity with Razorpay Order ID
+    const acceptedVersions = policyVersions || {
+      terms: '1.0',
+      privacy: '1.0',
+      cancellation: '1.0',
+      refund: '1.0',
+      shipping: '1.0',
+    };
+
+    // Create order in Sanity
     const newOrder = await client.create({
       _type: 'order',
       orderId,
       customer: customerRef,
       orderDate: new Date().toISOString(),
-      shippingAddress: {
-        firstName,
-        lastName,
-        email,
-        phone,
-        streetAddress,
-        city,
-        postalCode,
-        country,
-      },
+      shippingAddress: shippingAddressObj,
       products: formattedProducts,
       subtotal: computedSubtotal,
       shippingCharge: 0,
@@ -245,17 +307,40 @@ export async function POST(request) {
       currency: 'INR',
       paymentMethod: 'Razorpay',
       paymentStatus: 'Pending',
-      orderStatus: 'Pending',
-      razorpayOrderId: razorpayOrder.id,
+      orderStatus: initialOrderStatus,
+      policyConsent: true,
+      policyConsentAt: policyConsentAt || new Date().toISOString(),
+      policyVersions: acceptedVersions,
+      razorpayOrderId: razorpayOrder?.id || undefined,
       dealerNotifications: dealerNotifications || [],
       adminNotification: adminNotification || undefined,
       needsAdminAttention,
       attentionReason,
     });
 
+    if (actionType === 'connect_store') {
+      return NextResponse.json({
+        success: true,
+        actionType: 'connect_store',
+        orderId: newOrder.orderId,
+        orderDocId: newOrder._id,
+        orderStatus: 'Pending Confirmation',
+        totalAmount: computedSubtotal,
+        itemCount: formattedProducts.length,
+        customer: {
+          name: `${firstName} ${lastName}`,
+          email,
+          phone,
+        },
+        adminWhatsappUrl: adminNotification?.whatsappUrl || '',
+      });
+    }
+
     return NextResponse.json({
       success: true,
+      actionType: 'pay_now',
       orderId: newOrder.orderId,
+      orderDocId: newOrder._id,
       razorpayOrderId: razorpayOrder.id,
       amount: razorpayOrder.amount, // in paise
       currency: razorpayOrder.currency || 'INR',

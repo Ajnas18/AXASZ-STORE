@@ -3,6 +3,7 @@ import { SINGLE_PRODUCT_QUERY } from '@/sanity/queries';
 import { urlFor } from '@/sanity/client';
 import Link from 'next/link';
 import { ArrowLeft, ShoppingBag } from 'lucide-react';
+import { getProductSlug } from '@/lib/productUrl';
 import styles from './page.module.css';
 
 export default async function TryPage({ params }) {
@@ -62,7 +63,7 @@ export default async function TryPage({ params }) {
           )}
 
           <div className={styles.actions}>
-            <Link href={`/#products`}>
+            <Link href={`/product/${getProductSlug(product)}`}>
               <button className={styles.buyBtn}>
                 <ShoppingBag size={20} />
                 Buy Now

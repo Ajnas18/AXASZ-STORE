@@ -75,7 +75,15 @@ export default function Navbar() {
         <div className={styles.container}>
           <div className={styles.logo}>
             <Link href="/">
-              <Image src="/logo.png" alt="AXASZSTORE" width={60} height={60} style={{ objectFit: 'contain' }} />
+              <Image 
+                src="/logo.png" 
+                alt="AXASZSTORE" 
+                width={60} 
+                height={60} 
+                priority
+                loading="eager"
+                style={{ objectFit: 'contain' }} 
+              />
             </Link>
           </div>
 

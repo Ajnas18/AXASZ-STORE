@@ -5,6 +5,24 @@ import { compileDashboardAnalytics } from '@/lib/analytics';
 
 export async function GET(request) {
   try {
+    // Check for admin authorization
+    const session = await getSession();
+    const authHeader = request.headers.get('authorization');
+    const secretHeader = request.headers.get('x-admin-secret') || request.headers.get('x-revalidate-secret');
+    const urlSecret = new URL(request.url).searchParams.get('secret');
+
+    const expectedSecret = process.env.ADMIN_PASSWORD || process.env.SANITY_REVALIDATE_SECRET;
+    const isSecretValid = expectedSecret && (
+      secretHeader === expectedSecret ||
+      urlSecret === expectedSecret ||
+      authHeader === `Bearer ${expectedSecret}`
+    );
+
+    // If neither valid session nor valid secret is provided, reject request
+    if (!session?.isAdmin && !isSecretValid) {
+      return NextResponse.json({ error: 'Unauthorized: Admin access required' }, { status: 401 });
+    }
+
     const { searchParams } = new URL(request.url);
     const rangeKey = searchParams.get('range') || '30d';
     const customStart = searchParams.get('startDate');

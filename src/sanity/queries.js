@@ -1,5 +1,6 @@
 export const ALL_PRODUCTS_QUERY = `*[_type == "product"] | order(_createdAt desc)[0...100] {
   _id,
+  _createdAt,
   name,
   brand,
   productCode,
@@ -31,6 +32,7 @@ export const ALL_PRODUCTS_QUERY = `*[_type == "product"] | order(_createdAt desc
 
 export const SINGLE_PRODUCT_QUERY = `*[_type == "product" && _id == $id][0] {
   _id,
+  _createdAt,
   name,
   brand,
   productCode,
@@ -68,6 +70,7 @@ export const PRODUCT_BY_IDENTIFIER_QUERY = `*[_type == "product" && (
   lower(productCode) == lower($slug)
 )][0] {
   _id,
+  _createdAt,
   name,
   brand,
   productCode,

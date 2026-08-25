@@ -174,7 +174,7 @@ export async function POST(request) {
     // 6. Update Order in Sanity
     const patchData = {
       paymentStatus: 'Paid',
-      orderStatus: order.orderStatus === 'Pending' ? 'Confirmed' : order.orderStatus,
+      orderStatus: (order.orderStatus === 'Pending' || order.orderStatus === 'Pending Confirmation') ? 'Confirmed' : (order.orderStatus || 'Confirmed'),
       paymentMethod: 'Razorpay',
       razorpayPaymentId: razorpayPaymentId || order.razorpayPaymentId || '',
       razorpayOrderId: razorpayOrderId || order.razorpayOrderId || '',

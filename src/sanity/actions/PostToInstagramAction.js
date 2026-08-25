@@ -10,9 +10,9 @@ export function PostToInstagramAction(props) {
 
       try {
         const appUrl = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000';
-        const secret = "axasz_store_reval_secret_key_2026_x92";
+        const secret = process.env.SANITY_REVALIDATE_SECRET || process.env.NEXT_PUBLIC_SANITY_REVALIDATE_SECRET || '';
         
-        const res = await fetch(`${appUrl}/api/instagram?secret=${secret}`, {
+        const res = await fetch(`${appUrl}/api/instagram?secret=${encodeURIComponent(secret)}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -62,9 +62,9 @@ export function createPublishAndInstagramAction(originalPublishAction) {
         if (doc) {
           try {
             const appUrl = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000';
-            const secret = "axasz_store_reval_secret_key_2026_x92";
+            const secret = process.env.SANITY_REVALIDATE_SECRET || process.env.NEXT_PUBLIC_SANITY_REVALIDATE_SECRET || '';
             
-            fetch(`${appUrl}/api/instagram?secret=${secret}`, {
+            fetch(`${appUrl}/api/instagram?secret=${encodeURIComponent(secret)}`, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',

@@ -72,7 +72,7 @@ export default function SideDrawer({ isOpen, onClose, mode }) {
           ) : (
             <div className={styles.itemList}>
               {items.map((item) => (
-                <div key={`${item.id}-${isCart ? item.selectedSize : 'fav'}`} className={styles.itemCard}>
+                <div key={`${item.id}-${isCart ? `${item.selectedSize}-${item.selectedColor || 'default'}` : 'fav'}`} className={styles.itemCard}>
                   <img 
                     src={getProductImageUrl(item.image)} 
                     alt={item.name} 
@@ -96,7 +96,7 @@ export default function SideDrawer({ isOpen, onClose, mode }) {
                       </h4>
                       <button 
                         className={styles.removeItemBtn}
-                        onClick={() => isCart ? removeFromCart(item.id, item.selectedSize) : toggleWishlist(item)}
+                        onClick={() => isCart ? removeFromCart(item.id, item.selectedSize, item.selectedColor) : toggleWishlist(item)}
                         aria-label="Remove item"
                       >
                         <Trash2 size={16} />
@@ -108,11 +108,13 @@ export default function SideDrawer({ isOpen, onClose, mode }) {
                     
                     {isCart ? (
                       <div className={styles.cartControls}>
-                        <div className={styles.sizeInfo}>Size: {item.selectedSize}</div>
+                        <div className={styles.sizeInfo}>
+                          {item.selectedColor ? `Color: ${item.selectedColor} • ` : ''}Size: {item.selectedSize}
+                        </div>
                         <div className={styles.quantityControls}>
-                          <button onClick={() => updateQuantity(item.id, item.selectedSize, item.quantity - 1)}><Minus size={14}/></button>
+                          <button onClick={() => updateQuantity(item.id, item.selectedSize, item.quantity - 1, item.selectedColor)}><Minus size={14}/></button>
                           <span>{item.quantity}</span>
-                          <button onClick={() => updateQuantity(item.id, item.selectedSize, item.quantity + 1)}><Plus size={14}/></button>
+                          <button onClick={() => updateQuantity(item.id, item.selectedSize, item.quantity + 1, item.selectedColor)}><Plus size={14}/></button>
                         </div>
                       </div>
                     ) : (

@@ -82,7 +82,7 @@
   }
 
   .relatedSection {
-    padding: 0 1rem;
+    padding: 0 0.75rem;
     margin-top: 2.5rem;
   }
 
@@ -91,7 +91,7 @@
   }
 
   .relatedGrid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.65rem;
   }
 }

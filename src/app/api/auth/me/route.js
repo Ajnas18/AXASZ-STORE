@@ -7,7 +7,7 @@ export async function GET() {
     const session = await getSession();
 
     if (!session || !session.customerId) {
-      return NextResponse.json({ user: null }, { status: 401 });
+      return NextResponse.json({ user: null }, { status: 200 });
     }
 
     const customer = await client.fetch(
@@ -16,7 +16,7 @@ export async function GET() {
     );
 
     if (!customer) {
-      return NextResponse.json({ user: null }, { status: 401 });
+      return NextResponse.json({ user: null }, { status: 200 });
     }
 
     return NextResponse.json({

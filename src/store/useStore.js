@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { urlFor } from '@/sanity/client';
+import { urlFor } from '../sanity/client.js';
 
 // Helper to resolve Sanity image object to a string URL
 const resolveProductImage = (product) => {

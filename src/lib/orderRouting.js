@@ -43,20 +43,33 @@ export function buildWhatsAppUrl(phoneNumber, message) {
  */
 export function formatAddress(address) {
   if (!address) return 'Not provided';
-  const parts = [
+  
+  // If specific new address fields are provided:
+  const line1 = [address.houseBuilding, address.streetLocality || address.streetAddress].filter(Boolean).join(', ');
+  const landmarkPart = address.landmark ? `(Landmark: ${address.landmark})` : '';
+  const line2 = [address.city, address.state, address.postalCode || address.pincode].filter(Boolean).join(', ');
+  const countryPart = address.country || 'India';
+
+  const parts = [line1, landmarkPart, line2, countryPart].filter(Boolean);
+  if (parts.length > 0) {
+    return parts.join(', ');
+  }
+
+  // Fallback for legacy streetAddress
+  const fallbackParts = [
     address.streetAddress,
     address.city,
     address.postalCode,
     address.country,
   ].filter(Boolean);
-  return parts.join(', ') || 'Not provided';
+  return fallbackParts.join(', ') || 'Not provided';
 }
 
 /**
  * Generates the clean WhatsApp message for a Dealer when an order is PAID.
  */
 export function generateDealerPaidMessage({ order, dealer, items }) {
-  const customerName = `${order.shippingAddress?.firstName || ''} ${order.shippingAddress?.lastName || ''}`.trim() || 'Customer';
+  const customerName = order.shippingAddress?.fullName?.trim() || `${order.shippingAddress?.firstName || ''} ${order.shippingAddress?.lastName || ''}`.trim() || 'Customer';
   const customerPhone = order.shippingAddress?.phone || 'Not provided';
   const addressText = formatAddress(order.shippingAddress);
   const orderId = order.orderId || 'N/A';
@@ -104,7 +117,7 @@ export function generateDealerPaidMessage({ order, dealer, items }) {
  * Generates the WhatsApp message for AXASZSTORE Admin when an order is UNPAID / PENDING / FAILED.
  */
 export function generateAdminUnpaidMessage({ order, paymentStatus = 'UNPAID' }) {
-  const customerName = `${order.shippingAddress?.firstName || ''} ${order.shippingAddress?.lastName || ''}`.trim() || 'Customer';
+  const customerName = order.shippingAddress?.fullName?.trim() || `${order.shippingAddress?.firstName || ''} ${order.shippingAddress?.lastName || ''}`.trim() || 'Customer';
   const customerPhone = order.shippingAddress?.phone || 'Not provided';
   const addressText = formatAddress(order.shippingAddress);
   const orderId = order.orderId || 'N/A';
@@ -148,10 +161,68 @@ export function generateAdminUnpaidMessage({ order, paymentStatus = 'UNPAID' }) 
 }
 
 /**
+ * Generates the WhatsApp message for AXASZSTORE Admin when a customer requests Connect Store (Pending Confirmation).
+ */
+export function generateAdminConnectStoreMessage({ order }) {
+  const customerName = order.shippingAddress?.fullName?.trim() || `${order.shippingAddress?.firstName || ''} ${order.shippingAddress?.lastName || ''}`.trim() || 'Customer';
+  const customerPhone = order.shippingAddress?.phone || 'Not provided';
+  const customerEmail = order.shippingAddress?.email || 'Not provided';
+  const addressText = formatAddress(order.shippingAddress);
+  const orderId = order.orderId || 'N/A';
+  const items = order.products || [];
+  const totalAmount = order.totalAmount || order.subtotal || 0;
+
+  let message = `🛒 NEW ORDER REQUEST — CONNECT STORE\n\n`;
+  message += `Order Reference: #${orderId}\n`;
+  message += `Status: PENDING CONFIRMATION\n\n`;
+  message += `Customer Details:\n`;
+  message += `Name: ${customerName}\n`;
+  message += `Phone: ${customerPhone}\n`;
+  message += `Email: ${customerEmail}\n\n`;
+
+  message += `Items Requested:\n`;
+  items.forEach((item, idx) => {
+    const details = [
+      item.color ? `Color: ${item.color}` : '',
+      item.size ? `Size: UK ${item.size}` : '',
+    ].filter(Boolean).join(', ');
+    const detailsPart = details ? ` (${details})` : '';
+    message += `${idx + 1}. ${item.name}${detailsPart} - Qty: ${item.quantity} - ₹${item.price?.toLocaleString('en-IN') || 0}\n`;
+  });
+
+  message += `\nTotal Amount: ₹${totalAmount.toLocaleString('en-IN')}\n\n`;
+  message += `Delivery Address:\n${addressText}\n\n`;
+  message += `Please review order availability and confirm in Admin Dashboard to send payment link.`;
+
+  return message;
+}
+
+/**
+ * Generates the WhatsApp message from Admin to Customer when the order is CONFIRMED.
+ */
+export function generateCustomerOrderConfirmedMessage({ order, paymentLink = '' }) {
+  const customerName = order.shippingAddress?.fullName?.trim() || `${order.shippingAddress?.firstName || ''} ${order.shippingAddress?.lastName || ''}`.trim() || 'Customer';
+  const orderId = order.orderId || 'N/A';
+  const totalAmount = order.totalAmount || order.subtotal || 0;
+
+  let message = `Hi ${customerName},\n\n`;
+  message += `Great news! Your order request #${orderId} has been CONFIRMED by AXASZ STORE! 🎉\n\n`;
+  message += `Total Amount: ₹${totalAmount.toLocaleString('en-IN')}\n\n`;
+  if (paymentLink) {
+    message += `You can now securely complete your payment here:\n${paymentLink}\n\n`;
+  } else {
+    message += `You can complete your payment directly from your dashboard or checkout link.\n\n`;
+  }
+  message += `Thank you for choosing AXASZ STORE!`;
+
+  return message;
+}
+
+/**
  * Generates an Admin Alert message when a PAID order has products with no assigned dealer.
  */
 export function generateAdminUnassignedDealerMessage({ order, unassignedItems }) {
-  const customerName = `${order.shippingAddress?.firstName || ''} ${order.shippingAddress?.lastName || ''}`.trim() || 'Customer';
+  const customerName = order.shippingAddress?.fullName?.trim() || `${order.shippingAddress?.firstName || ''} ${order.shippingAddress?.lastName || ''}`.trim() || 'Customer';
   const customerPhone = order.shippingAddress?.phone || 'Not provided';
   const addressText = formatAddress(order.shippingAddress);
   const orderId = order.orderId || 'N/A';
@@ -264,6 +335,17 @@ export function computeOrderRouting({ order, dealersMap = {}, adminWhatsapp = DE
         sentAt: null,
       };
     }
+  } else if (order.orderStatus === 'Pending Confirmation') {
+    // CONNECT STORE / PENDING CONFIRMATION: Route custom Connect Store message to Admin WhatsApp
+    const connectMsg = generateAdminConnectStoreMessage({ order });
+    const adminWaUrl = buildWhatsAppUrl(adminWhatsapp, connectMsg);
+
+    adminNotification = {
+      status: 'READY',
+      whatsappUrl: adminWaUrl,
+      message: connectMsg,
+      sentAt: null,
+    };
   } else {
     // UNPAID / PENDING / FAILED: Route strictly to Admin WhatsApp
     const unpaidMsg = generateAdminUnpaidMessage({

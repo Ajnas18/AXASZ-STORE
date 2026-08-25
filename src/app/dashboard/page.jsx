@@ -80,7 +80,7 @@ export default function Dashboard() {
             {/* Filter & Sort Tabs */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
               <div className="flex items-center gap-1 sm:gap-6 text-[14px] overflow-x-auto pb-2 sm:pb-0 scrollbar-hide">
-                {['All Orders', 'Processing', 'Shipped', 'Delivered', 'Cancelled'].map(tab => (
+                {['All Orders', 'Pending Confirmation', 'Confirmed', 'Processing', 'Shipped', 'Delivered', 'Cancelled'].map(tab => (
                   <button
                     key={tab}
                     onClick={() => setActiveTab(tab)}
@@ -140,6 +140,8 @@ export default function Dashboard() {
                       </div>
                       <div className="flex items-center gap-3">
                         <span className={`px-3 py-1.5 text-[13px] font-bold rounded-lg ${
+                          order.orderStatus === 'Pending Confirmation' ? 'bg-amber-100 text-amber-800' :
+                          order.orderStatus === 'Confirmed' ? 'bg-blue-100 text-blue-800' :
                           order.orderStatus === 'Pending' ? 'bg-amber-50 text-amber-600' :
                           order.orderStatus === 'Delivered' ? 'bg-green-50 text-green-600' :
                           order.orderStatus === 'Cancelled' ? 'bg-red-50 text-red-600' :
