@@ -189,67 +189,139 @@
   color: #6b7280;
 }
 
-/* ── COLOR VARIANT SWATCHES (AMAZON / FLIPKART STYLE) ── */
+/* ── COLOR VARIANT SHOE THUMBNAIL CARDS ── */
 .variantSection {
   display: flex;
   flex-direction: column;
+  gap: 0.75rem;
 }
 
-.swatchesFlex {
+.variantCardsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 0.75rem;
+}
+
+.variantCard {
   display: flex;
-  gap: 0.65rem;
-  flex-wrap: wrap;
-}
-
-.swatchCard {
-  display: inline-flex;
+  flex-direction: column;
   align-items: center;
-  gap: 0.55rem;
-  padding: 0.5rem 0.9rem 0.5rem 0.6rem;
-  border: 1.5px solid #e5e7eb;
-  border-radius: 99px;
-  background: white;
+  padding: 0.5rem 0.5rem 0.6rem 0.5rem;
+  border: 1.5px solid #E5E5E5;
+  border-radius: 12px;
+  background: #FFFFFF;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
 }
 
-.swatchCard:hover {
-  border-color: #9ca3af;
-  transform: translateY(-1px);
+.variantCard:hover {
+  border-color: #7A7A7A;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
 }
 
-.activeSwatchCard {
-  border-color: #111827;
-  background: #111827;
-  color: white;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+.activeVariantCard {
+  border-color: #1A1A1A;
+  border-width: 2px;
+  background: #FAFAFA;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
 }
 
-.swatchCircle {
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  border: 1px solid rgba(0,0,0,0.12);
-  flex-shrink: 0;
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.4);
+.outOfStockVariantCard {
+  opacity: 0.6;
 }
 
-.swatchLabel {
-  font-size: 0.82rem;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-}
-
-.activeSwatchCard .swatchLabel {
-  color: white;
-}
-
-.swatchCheck {
-  color: #38bdf8;
+.variantCardImageWrapper {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 8px;
+  background: #F5F5F5;
   display: flex;
   align-items: center;
-  margin-left: 0.1rem;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 0.4rem;
+}
+
+.variantCardImage {
+  width: 90%;
+  height: 90%;
+  object-fit: contain;
+  transition: transform 0.25s ease;
+}
+
+.variantCard:hover .variantCardImage {
+  transform: scale(1.06);
+}
+
+.variantActiveBadge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: #1A1A1A;
+  color: #FFFFFF;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.variantOosBadge {
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(239, 68, 68, 0.9);
+  color: #FFFFFF;
+  font-size: 0.6rem;
+  font-weight: 700;
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+  white-space: nowrap;
+  letter-spacing: 0.02em;
+}
+
+.variantCardInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  width: 100%;
+}
+
+.variantCardColor {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #1A1A1A;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.activeVariantCard .variantCardColor {
+  color: #1A1A1A;
+  font-weight: 800;
+}
+
+.variantCardPrice {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #7A7A7A;
+}
+
+.activeVariantCard .variantCardPrice {
+  color: #1A1A1A;
+  font-weight: 700;
 }
 
 /* ── SIZES GRID ── */
@@ -719,6 +791,11 @@
     width: 72px;
     height: 72px;
     border-radius: 12px;
+  }
+
+  .variantCardsGrid {
+    grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
+    gap: 0.5rem;
   }
 
   .sizesGrid {

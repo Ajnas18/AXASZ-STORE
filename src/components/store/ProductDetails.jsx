@@ -54,9 +54,23 @@ export default function ProductDetails({ product }) {
   const { addToCart, toggleWishlist, wishlist } = useStore();
   const isWishlisted = wishlist.some((item) => item._id === product?._id || item.id === product?.id);
 
-  // Sync state whenever the root product changes
+  // Initialize and sync variant from URL params if present
   useEffect(() => {
-    if (variants.length > 0) {
+    if (typeof window !== 'undefined' && variants.length > 0) {
+      const params = new URLSearchParams(window.location.search);
+      const colorParam = params.get('color') || params.get('variant') || params.get('sku');
+      if (colorParam) {
+        const matched = findVariant(variants, colorParam);
+        if (matched) {
+          setSelectedVariantId(matched.variantId);
+          setActiveImage(matched.gallery?.[0] || matched.image || '/placeholder1.jpg');
+          if (matched.sizes?.length > 0) {
+            setSelectedSize(matched.sizes[0]);
+          }
+          return;
+        }
+      }
+      
       const firstVar = variants[0];
       setSelectedVariantId(firstVar.variantId);
       setActiveImage(firstVar.gallery[0]);
@@ -65,7 +79,7 @@ export default function ProductDetails({ product }) {
     }
   }, [product, variants]);
 
-  // Handle color variant switch - strictly resets gallery to 1st image of selected variant
+  // Handle color variant switch - strictly resets gallery to 1st image of selected variant and updates URL
   const handleSelectVariant = useCallback((variant) => {
     if (!variant || variant.variantId === selectedVariantId) return;
 
@@ -80,6 +94,13 @@ export default function ProductDetails({ product }) {
       if (!variant.sizes.includes(selectedSize)) {
         setSelectedSize(variant.sizes[0]);
       }
+    }
+
+    // 3. Update URL query params without reloading
+    if (typeof window !== 'undefined') {
+      const url = new URL(window.location.href);
+      url.searchParams.set('color', variant.color);
+      window.history.replaceState(null, '', url.toString());
     }
   }, [selectedVariantId, selectedSize]);
 
@@ -195,21 +216,21 @@ export default function ProductDetails({ product }) {
             Engineered for style, durability, and all-day comfort with signature cushioning technology.
           </p>
 
-          {/* ── COLOR VARIANT SELECTOR (Amazon / Flipkart Style) ── */}
+          {/* ── COLOR VARIANT SELECTOR (Shoe Thumbnail Cards) ── */}
           <div className={styles.variantSection}>
             <div className={styles.sectionHeaderRow}>
               <h3 className={styles.sectionTitle}>
-                Color: <span className={styles.highlightedColor}>{selectedVariant.color}</span>
+                Colorway: <span className={styles.highlightedColor}>{selectedVariant.color}</span>
               </h3>
               {selectedVariant.asin && (
                 <span className={styles.asinTag}>ASIN: {selectedVariant.asin}</span>
               )}
             </div>
 
-            <div className={styles.swatchesFlex} role="radiogroup" aria-label="Product color variants">
+            <div className={styles.variantCardsGrid} role="radiogroup" aria-label="Product color variants">
               {variants.map((v) => {
                 const isSelected = v.variantId === selectedVariant.variantId;
-                const swatchBackground = v.colorHex || '#e5e7eb';
+                const thumbUrl = v.image || (v.gallery && v.gallery[0]) || '/placeholder1.jpg';
 
                 return (
                   <button
@@ -217,21 +238,29 @@ export default function ProductDetails({ product }) {
                     type="button"
                     role="radio"
                     aria-checked={isSelected}
-                    className={`${styles.swatchCard} ${isSelected ? styles.activeSwatchCard : ''}`}
+                    className={`${styles.variantCard} ${isSelected ? styles.activeVariantCard : ''} ${!v.inStock ? styles.outOfStockVariantCard : ''}`}
                     onClick={() => handleSelectVariant(v)}
                     title={`${v.color} - ₹${v.price.toLocaleString()}`}
                   >
-                    {/* Swatch preview icon or mini thumbnail */}
-                    <div 
-                      className={styles.swatchCircle} 
-                      style={{ background: swatchBackground }}
-                    />
-                    <span className={styles.swatchLabel}>{v.color}</span>
-                    {isSelected && (
-                      <span className={styles.swatchCheck}>
-                        <CheckCircle2 size={13} strokeWidth={2.5} />
-                      </span>
-                    )}
+                    <div className={styles.variantCardImageWrapper}>
+                      <img 
+                        src={thumbUrl} 
+                        alt={v.color} 
+                        className={styles.variantCardImage} 
+                      />
+                      {isSelected && (
+                        <span className={styles.variantActiveBadge}>
+                          <CheckCircle2 size={12} strokeWidth={2.5} />
+                        </span>
+                      )}
+                      {!v.inStock && (
+                        <span className={styles.variantOosBadge}>Out of Stock</span>
+                      )}
+                    </div>
+                    <div className={styles.variantCardInfo}>
+                      <span className={styles.variantCardColor}>{v.color}</span>
+                      <span className={styles.variantCardPrice}>₹{v.price?.toLocaleString()}</span>
+                    </div>
                   </button>
                 );
               })}
