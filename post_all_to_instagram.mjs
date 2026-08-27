@@ -11,9 +11,12 @@ const envVars = envFile.split('\n').reduce((acc, line) => {
   return acc;
 }, {});
 
+const instagramAccountId = envVars.INSTAGRAM_ACCOUNT_ID;
+const instagramAccessToken = envVars.INSTAGRAM_ACCESS_TOKEN;
 const zapierUrl = envVars.ZAPIER_WEBHOOK_URL;
-if (!zapierUrl) {
-  console.error("❌ ERROR: ZAPIER_WEBHOOK_URL is not set in .env.local!");
+
+if (!zapierUrl && (!instagramAccountId || !instagramAccessToken)) {
+  console.error("❌ ERROR: Neither INSTAGRAM_ACCOUNT_ID/INSTAGRAM_ACCESS_TOKEN nor ZAPIER_WEBHOOK_URL is set in .env.local!");
   process.exit(1);
 }
 
@@ -103,20 +106,56 @@ async function main() {
         caption
       };
       
-      console.log(`Sending to Zapier Webhook...`);
-      const response = await fetch(zapierUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload)
-      });
-      
-      if (response.ok) {
-        console.log(`✅ Successfully sent "${product.name}" to Instagram!`);
-      } else {
-        const errText = await response.text();
-        console.error(`❌ Failed to post "${product.name}": Status ${response.status} - ${errText}`);
+      if (instagramAccountId && instagramAccessToken) {
+        console.log(`Publishing directly via Meta Instagram Graph API...`);
+        
+        // Step 1: Create Container
+        const containerUrl = new URL(`https://graph.facebook.com/v21.0/${instagramAccountId}/media`);
+        containerUrl.searchParams.append('image_url', imageUrl);
+        containerUrl.searchParams.append('caption', caption);
+        containerUrl.searchParams.append('access_token', instagramAccessToken);
+
+        const containerRes = await fetch(containerUrl.toString(), { method: 'POST' });
+        const containerData = await containerRes.json();
+
+        if (!containerRes.ok || !containerData.id) {
+          console.error(`❌ Failed to create container for "${product.name}":`, containerData);
+          continue;
+        }
+
+        // Wait 3 seconds for Meta image processing
+        await delay(3000);
+
+        // Step 2: Publish Container
+        const publishUrl = new URL(`https://graph.facebook.com/v21.0/${instagramAccountId}/media_publish`);
+        publishUrl.searchParams.append('creation_id', containerData.id);
+        publishUrl.searchParams.append('access_token', instagramAccessToken);
+
+        const publishRes = await fetch(publishUrl.toString(), { method: 'POST' });
+        const publishData = await publishRes.json();
+
+        if (publishRes.ok && publishData.id) {
+          console.log(`✅ Successfully published "${product.name}" to Instagram! (Post ID: ${publishData.id})`);
+        } else {
+          console.error(`❌ Failed to publish "${product.name}":`, publishData);
+        }
+
+      } else if (zapierUrl) {
+        console.log(`Sending to Zapier Webhook...`);
+        const response = await fetch(zapierUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload)
+        });
+        
+        if (response.ok) {
+          console.log(`✅ Successfully sent "${product.name}" to Zapier!`);
+        } else {
+          const errText = await response.text();
+          console.error(`❌ Failed to post "${product.name}": Status ${response.status} - ${errText}`);
+        }
       }
       
       // Wait 5 seconds before the next post to prevent spam triggers

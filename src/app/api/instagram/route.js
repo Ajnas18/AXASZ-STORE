@@ -64,15 +64,64 @@ export async function POST(request) {
       `Virtual Try-on & Shop → ${tryUrl}\n\n` +
       `#sneakers #axaszstore #sneakerhead #kicks #${cleanBrandTag} #freshkicks`;
 
-    // 5. Send to Zapier
+    // 5. Post directly to Instagram via Meta Graph API (or fallback to Zapier/mock)
+    const instagramAccountId = process.env.INSTAGRAM_ACCOUNT_ID;
+    const instagramAccessToken = process.env.INSTAGRAM_ACCESS_TOKEN;
     const zapierUrl = process.env.ZAPIER_WEBHOOK_URL;
-    if (!zapierUrl) {
-      console.log('ZAPIER_WEBHOOK_URL is not set. Mocking success response:', { imageUrl, caption });
+
+    // Direct Instagram Graph API Integration
+    if (instagramAccountId && instagramAccessToken) {
+      // Step 5a: Create Media Container
+      const containerUrl = new URL(`https://graph.facebook.com/v21.0/${instagramAccountId}/media`);
+      containerUrl.searchParams.append('image_url', imageUrl);
+      containerUrl.searchParams.append('caption', caption);
+      containerUrl.searchParams.append('access_token', instagramAccessToken);
+
+      const containerRes = await fetch(containerUrl.toString(), { method: 'POST' });
+      const containerData = await containerRes.json();
+
+      if (!containerRes.ok || !containerData.id) {
+        console.error('Meta API Container Error:', containerData);
+        return NextResponse.json({
+          success: false,
+          error: `Failed to create Instagram container: ${containerData.error?.message || JSON.stringify(containerData)}`
+        }, { status: 502, headers: corsHeaders });
+      }
+
+      const creationId = containerData.id;
+
+      // Small delay to ensure container processing is ready
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
+      // Step 5b: Publish Media Container
+      const publishUrl = new URL(`https://graph.facebook.com/v21.0/${instagramAccountId}/media_publish`);
+      publishUrl.searchParams.append('creation_id', creationId);
+      publishUrl.searchParams.append('access_token', instagramAccessToken);
+
+      const publishRes = await fetch(publishUrl.toString(), { method: 'POST' });
+      const publishData = await publishRes.json();
+
+      if (!publishRes.ok || !publishData.id) {
+        console.error('Meta API Publish Error:', publishData);
+        return NextResponse.json({
+          success: false,
+          error: `Failed to publish to Instagram: ${publishData.error?.message || JSON.stringify(publishData)}`
+        }, { status: 502, headers: corsHeaders });
+      }
+
       return NextResponse.json({
         success: true,
-        mocked: true,
-        message: 'Zapier URL is not configured. Mocked payload generated successfully.',
-        data: {
+        message: 'Product successfully published directly to Instagram feed!',
+        instagramPostId: publishData.id
+      }, { headers: corsHeaders });
+    }
+
+    // Fallback: Check if Zapier URL is provided
+    if (zapierUrl) {
+      const response = await fetch(zapierUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
           productId: _id,
           name,
           brand,
@@ -81,16 +130,30 @@ export async function POST(request) {
           imageUrl,
           tryUrl,
           caption
-        }
+        }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        return NextResponse.json({
+          success: false,
+          error: `Zapier webhook rejected request: ${response.status} - ${errorText}`
+        }, { status: 502, headers: corsHeaders });
+      }
+
+      return NextResponse.json({
+        success: true,
+        message: 'Product formatted and forwarded to Zapier successfully!'
       }, { headers: corsHeaders });
     }
 
-    const response = await fetch(zapierUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
+    // Fallback: Mock mode if neither is configured
+    console.log('Neither INSTAGRAM_* nor ZAPIER_WEBHOOK_URL is set. Mocking success response:', { imageUrl, caption });
+    return NextResponse.json({
+      success: true,
+      mocked: true,
+      message: 'Instagram credentials not configured yet. Mock payload generated successfully.',
+      data: {
         productId: _id,
         name,
         brand,
@@ -99,20 +162,7 @@ export async function POST(request) {
         imageUrl,
         tryUrl,
         caption
-      }),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      return NextResponse.json({
-        success: false,
-        error: `Zapier webhook rejected request: ${response.status} - ${errorText}`
-      }, { status: 502, headers: corsHeaders });
-    }
-
-    return NextResponse.json({
-      success: true,
-      message: 'Product formatted and forwarded to Zapier successfully!'
+      }
     }, { headers: corsHeaders });
 
   } catch (error) {
