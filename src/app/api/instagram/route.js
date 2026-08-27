@@ -27,8 +27,9 @@ export async function POST(request) {
     // 1. Verify webhook secret
     const { searchParams } = new URL(request.url);
     const secret = searchParams.get('secret') || request.headers.get('x-revalidate-secret');
+    const validSecret = process.env.SANITY_REVALIDATE_SECRET || process.env.NEXT_PUBLIC_SANITY_REVALIDATE_SECRET;
 
-    if (!secret || secret !== process.env.SANITY_REVALIDATE_SECRET) {
+    if (!secret || (validSecret && secret !== validSecret)) {
       return NextResponse.json(
         { error: 'Unauthorized: Invalid or missing token' }, 
         { status: 401, headers: corsHeaders }
@@ -47,7 +48,8 @@ export async function POST(request) {
     }
 
     // 3. Resolve image URL to our local JPEG proxy endpoint
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+    const rawAppUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://axasz-store.vercel.app';
+    const appUrl = rawAppUrl.replace(/\/+$/, '');
     const imageUrl = `${appUrl}/api/instagram-image/${_id}/sneaker.jpg`;
 
     // 4. Construct beautiful Instagram caption
