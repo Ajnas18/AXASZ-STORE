@@ -39,17 +39,17 @@ async function testSinglePost() {
     const product = products[0];
     console.log(`Found product: "${product.name}" (${product.brand})`);
 
-    const appUrl = 'https://axaszstore.com';
+    const appUrl = (envVars.NEXT_PUBLIC_APP_URL || 'https://axasz-store.vercel.app').replace(/\/+$/, '');
     const imageUrl = `${appUrl}/api/instagram-image/${product._id}/sneaker.jpg`;
     const tryUrl = `${appUrl}/try/${product._id}`;
     const cleanBrandTag = product.brand ? product.brand.toLowerCase().replace(/[^a-z0-9]/g, '') : 'sneakers';
     
-    const caption = `🔥 NEW DROP: ${product.name}\n` +
+    const caption = `NEW DROP: ${product.name}\n` +
       `━━━━━━━━━━━━━━━━━━━━\n` +
       `Brand: ${product.brand || 'AXASZ'}\n` +
       `SKU: ${product.productCode || 'N/A'}\n` +
       `━━━━━━━━━━━━━━━━━━━━\n` +
-      `Check our website for price & details! 👟\n` +
+      `Check our website for price & details!\n` +
       `Virtual Try-on & Shop → ${tryUrl}\n\n` +
       `#sneakers #axaszstore #sneakerhead #kicks #${cleanBrandTag} #freshkicks`;
 

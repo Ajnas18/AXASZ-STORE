@@ -7,9 +7,9 @@ async function sendTest() {
     brand: 'Nike',
     price: 9500,
     productCode: 'AXS0013',
-    imageUrl: 'https://axaszstore.com/api/instagram-image/test/sneaker.jpg',
-    tryUrl: 'https://axaszstore.com/try/test',
-    caption: '🔥 NEW DROP: Nike Dunk Low Panda\n━━━━━━━━━━━━━━━━━━━━\nBrand: Nike\nSKU: AXS0013\n━━━━━━━━━━━━━━━━━━━━\nCheck our website for price & details! 👟\nVirtual Try-on & Shop → https://axaszstore.com/try/test\n\n#sneakers #axaszstore #sneakerhead #kicks #nike #freshkicks'
+    imageUrl: 'https://axasz-store.vercel.app/api/instagram-image/0dc31b77-5d90-4b78-ba6c-185f9a64934d/sneaker.jpg',
+    tryUrl: 'https://axasz-store.vercel.app/try/0dc31b77-5d90-4b78-ba6c-185f9a64934d',
+    caption: '🔥 NEW DROP: Nike Dunk Low Panda\n━━━━━━━━━━━━━━━━━━━━\nBrand: Nike\nSKU: AXS0013\n━━━━━━━━━━━━━━━━━━━━\nCheck our website for price & details! 👟\nVirtual Try-on & Shop → https://axasz-store.vercel.app/try/0dc31b77-5d90-4b78-ba6c-185f9a64934d\n\n#sneakers #axaszstore #sneakerhead #kicks #nike #freshkicks'
   };
 
   console.log('Sending test data to Make.com webhook...');
