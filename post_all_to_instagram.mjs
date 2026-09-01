@@ -79,19 +79,19 @@ async function main() {
       // Force use of the public Vercel domain so that Instagram's crawler can always reach the proxy endpoint
       const appUrl = envVars.NEXT_PUBLIC_APP_URL && !envVars.NEXT_PUBLIC_APP_URL.includes('localhost')
         ? envVars.NEXT_PUBLIC_APP_URL.replace(/\/$/, '')
-        : 'https://axaszstore.com';
+        : 'https://axasz-store.vercel.app';
         
       const imageUrl = `${appUrl}/api/instagram-image/${product._id}/sneaker.jpg`;
       const tryUrl = `${appUrl}/try/${product._id}`;
       
       const cleanBrandTag = product.brand ? product.brand.toLowerCase().replace(/[^a-z0-9]/g, '') : 'sneakers';
       
-      const caption = `🔥 NEW DROP: ${product.name}\n` +
+      const caption = `NEW DROP: ${product.name}\n` +
         `━━━━━━━━━━━━━━━━━━━━\n` +
         `Brand: ${product.brand || 'AXASZ'}\n` +
         `SKU: ${product.productCode || 'N/A'}\n` +
         `━━━━━━━━━━━━━━━━━━━━\n` +
-        `Check our website for price & details! 👟\n` +
+        `Check our website for price & details!\n` +
         `Virtual Try-on & Shop → ${tryUrl}\n\n` +
         `#sneakers #axaszstore #sneakerhead #kicks #${cleanBrandTag} #freshkicks`;
         

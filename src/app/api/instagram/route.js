@@ -57,12 +57,12 @@ export async function POST(request) {
     
     const cleanBrandTag = brand ? brand.toLowerCase().replace(/[^a-z0-9]/g, '') : 'sneakers';
 
-    const caption = `🔥 NEW DROP: ${name}\n` +
+    const caption = `NEW DROP: ${name}\n` +
       `━━━━━━━━━━━━━━━━━━━━\n` +
       `Brand: ${brand || 'AXASZ'}\n` +
       `SKU: ${productCode || 'N/A'}\n` +
       `━━━━━━━━━━━━━━━━━━━━\n` +
-      `Check our website for price & details! 👟\n` +
+      `Check our website for price & details!\n` +
       `Virtual Try-on & Shop → ${tryUrl}\n\n` +
       `#sneakers #axaszstore #sneakerhead #kicks #${cleanBrandTag} #freshkicks`;
 
